@@ -419,7 +419,7 @@ class MatrizDispersa{
         }
     }
     graficar(){
-        let codigodot = "digraph G { \ngraph [pad=\"0.5\", nodesep=\"1\", ranksep=\"1\"];\nlabel=\"Libros de categoria Thriller\" fontsize=28;\nnode [shape=box, height=0.8];\nPrimero[ label = \"0\", width = 1, group = 1];"
+        let codigodot = "digraph G { \nbgcolor=\"#841621\"; \ngraph [pad=\"0.5\", nodesep=\"1\", ranksep=\"1\"];\nlabel=\"Matriz Dispersa de Libros de categoria Thriller\" fontcolor=\"white\"fontname=\"Roboto Condensed\" fontsize=28;\nnode [shape=box, height=0.8];\nPrimero[style=\"filled\",fillcolor=\"black\",label = \"\", width = 1, group = 1];"
         //FILAS
         let temporalfila = this.filas.primero
         let idfila = ""
@@ -429,13 +429,13 @@ class MatrizDispersa{
         while(temporalfila != null){
             let primero = true
             let actual = temporalfila.acceso
-            idfila += "\nFila" + actual.x+" [label = \"Repisa #" + actual.x + "\" group= 1];"
+            idfila += "\nFila" + actual.x+" [style=\"filled\",fontname=\"Roboto Condensed\",fillcolor=\"black\",fontcolor=\"white\", label = \"Repisa #" + actual.x + "\" group= 1];"
             if(temporalfila.siguiente != null){
                 conexionesfilas += "\nFila" + actual.x + "->Fila" + temporalfila.siguiente.acceso.x + ";"
             }
             direccioninteriores +="\n{ rank = same; Fila" + actual.x + "; "
             while(actual != null){
-                nodosinteriores += "\nNodoF" + actual.x + "_C" + actual.y + "[label=\"" + actual.libro.nombre + "\" group=" + actual.y + "];"
+                nodosinteriores += "\nNodoF" + actual.x + "_C" + actual.y + "[style=\"filled\",fontname=\"Roboto Condensed\",fillcolor=\"white\",label=\"" + actual.libro.nombre + "\" group=" + actual.y + "];"
                 direccioninteriores += "NodoF" + actual.x + "_C" + actual.y + "; "
                 if(primero == true){
                     nodosinteriores += "\nFila"+actual.x + "-> NodoF" + actual.x + "_C" + actual.y + ";"
@@ -466,7 +466,7 @@ class MatrizDispersa{
         while(temporalcolumna != null){
             let primero1 = true
             let actual = temporalcolumna.acceso
-            idcolumna+="\nColumna"+actual.y +" [label = \"Libros de la \\nColumna #" + actual.y + "\" group= "+actual.y+"];"
+            idcolumna+="\nColumna"+actual.y +" [style=\"filled\",fillcolor=\"black\",fontname=\"Roboto Condensed\",fontcolor=\"white\",label = \"Libros de la \\nColumna #" + actual.y + "\" group= "+actual.y+"];"
             direccion += "Columna" + actual.y + "; "
             if(temporalcolumna.siguiente != null){
                 conexionescolumnas += "\nColumna" + actual.y + " -> Columna" + temporalcolumna.siguiente.acceso.y + ";"
@@ -497,6 +497,86 @@ class MatrizDispersa{
         codigodot += direccioninteriores
         codigodot += "\n}"
         localStorage.setItem("dot_matrizdispersa",codigodot)
+    }
+    graficarlibrera(){
+        let codigodot = "digraph G { \nbgcolor=\"transparent\"; \ngraph [pad=\"0.5\", nodesep=\"1\", ranksep=\"1\"];\nnode [shape=box, height=0.8];\nPrimero[style=\"filled\",fontname=\"Roboto Condensed\",fillcolor=\"saddlebrown\",label = \"\", width = 1, group = 1];"
+        //FILAS
+        let temporalfila = this.filas.primero
+        let idfila = ""
+        let conexionesfilas = ""
+        let nodosinteriores = ""
+        let direccioninteriores = ""
+        while(temporalfila != null){
+            let primero = true
+            let actual = temporalfila.acceso
+            idfila += "\nFila" + actual.x+" [style=\"filled\",fontname=\"Roboto Condensed\",fillcolor=\"saddlebrown\",fontcolor=\"white\", label = \"Repisa #" + actual.x + "\" group= 1];"
+            if(temporalfila.siguiente != null){
+                conexionesfilas += "\nFila" + actual.x + "->Fila" + temporalfila.siguiente.acceso.x + "[color=\"white\"];"
+            }
+            direccioninteriores +="\n{ rank = same; Fila" + actual.x + "; "
+            while(actual != null){
+                nodosinteriores += "\nNodoF" + actual.x + "_C" + actual.y + "[style=\"filled\",fontname=\"Roboto Condensed\",fillcolor=\"lightsalmon\",label=\"" + actual.libro.nombre + "\" group=" + actual.y + "];"
+                direccioninteriores += "NodoF" + actual.x + "_C" + actual.y + "; "
+                if(primero == true){
+                    nodosinteriores += "\nFila"+actual.x + "-> NodoF" + actual.x + "_C" + actual.y + "[color=\"white\"];"
+                    if(actual.derecha!= null){
+                        nodosinteriores += "\nNodoF" + actual.x + "_C" + actual.y + "-> NodoF" + actual.derecha.x + "_C" + actual.derecha.y + "[color=\"white\"];"
+                        nodosinteriores += "\nNodoF" + actual.derecha.x + "_C" + actual.derecha.y + "-> NodoF" + actual.x + "_C" + actual.y + "[color=\"white\"];"
+                        primero = false
+                    }else{
+                        if(actual.derecha != null){
+                            nodosinteriores += "\nNodoF" + actual.x + "_C" + actual.y + "-> NodoF" + actual.derecha.x + "_C" + actual.derecha.y + "[color=\"white\"];"
+                            nodosinteriores += "\nNodoF" + actual.derecha.x + "_C" + actual.derecha.y + "-> NodoF" + actual.x + "_C" + actual.y + "[color=\"white\"];"
+                        }
+                    }
+                }
+                actual = actual.derecha
+            }
+            temporalfila = temporalfila.siguiente
+            direccioninteriores+="}"
+        }
+        codigodot+= idfila + "\nedge[dir=\"both\"];" + conexionesfilas + "\nedge[dir=\"both\"];" 
+        //COLUMNAS
+        let temporalcolumna = this.columnas.primero
+        let primeraC = this.columnas.primero.acceso.y
+        let primeraF = this.filas.primero.acceso.x
+        let idcolumna = ""
+        let conexionescolumnas = ""
+        let direccion = "\n{rank=same; Primero;"
+        while(temporalcolumna != null){
+            let primero1 = true
+            let actual = temporalcolumna.acceso
+            idcolumna+="\nColumna"+actual.y +" [style=\"filled\",fontname=\"Roboto Condensed\",fillcolor=\"saddlebrown\",fontcolor=\"white\",label = \"Libros de la \\nColumna #" + actual.y + "\" group= "+actual.y+"];"
+            direccion += "Columna" + actual.y + "; "
+            if(temporalcolumna.siguiente != null){
+                conexionescolumnas += "\nColumna" + actual.y + " -> Columna" + temporalcolumna.siguiente.acceso.y + "[color=\"white\"];"
+            }
+            while(actual != null){
+                if(primero1 == true){
+                    codigodot+="\nColumna"+ actual.y + " -> NodoF" + actual.x + "_C" + actual.y + "[color=\"white\"];"
+                    if(actual.abajo != null){
+                        codigodot+="\nNodoF" + actual.x + "_C" + actual.y + " -> NodoF"+ actual.abajo.x + "_C" + actual.abajo.y + "[color=\"white\"];"
+                        codigodot+="\nNodoF" + actual.abajo.x + "_C" + actual.abajo.y + " -> NodoF"+ actual.x + "_C" + actual.y + "[color=\"white\"];"
+                    }
+                    primero1 = false
+                }else{
+                    if(actual.abajo != null){
+                        codigodot+="\nNodoF" + actual.x + "_C" + actual.y + " -> NodoF"+ actual.abajo.x + "_C" + actual.abajo.y + "[color=\"white\"];"
+                        codigodot+="\nNodoF" + actual.abajo.x + "_C" + actual.abajo.y + " -> NodoF"+ actual.x + "_C" + actual.y + "[color=\"white\"];"
+                    }
+                }
+                actual = actual.abajo
+            }
+            temporalcolumna = temporalcolumna.siguiente
+        }
+        codigodot += idcolumna
+        codigodot += conexionescolumnas
+        codigodot += "\nPrimero -> Fila" + primeraF + "[color=\"white\"]; \nPrimero -> Columna" + primeraC + "[color=\"white\"];"
+        codigodot += direccion + "}"
+        codigodot += nodosinteriores
+        codigodot += direccioninteriores
+        codigodot += "\n}"
+        localStorage.setItem("librera_matrizdispersa",codigodot)
     }
 }
 
