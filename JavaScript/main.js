@@ -177,11 +177,15 @@ class Usuario{
 
 function agregarPrimerAdmin(){
     let users = new ListaUsuarios()
-    let nuevo = new Usuario(2354168452525,"Wilfred Perez","Wilfred","admin@edd.usac.edu.gt","Administrador","123","+502 (123) 123-4567")
-    users.insertarusuario(nuevo)
-    console.log(JSON.stringify(users.primero.usuario))
-    localStorage.setItem("lista_usuarios", "["+JSON.stringify(users.primero.usuario)+"]")
+    let userstotales = JSON.parse(localStorage.getItem("lista_usuarios"))
+    if(userstotales == null){
+        let nuevo = new Usuario(2354168452525,"Wilfred Perez","Wilfred","admin@edd.usac.edu.gt","Administrador","123","+502 (123) 123-4567")
+        users.insertarusuario(nuevo)
+        console.log(JSON.stringify(users.primero.usuario))
+        localStorage.setItem("lista_usuarios", "["+JSON.stringify(users.primero.usuario)+"]")
+    }
 }
+agregarPrimerAdmin()
 //FUNCION PARA LA CARGA MASIVA DE USUARIOS
 function CargaMasivaUsuarios(){
     let input_archivo = document.getElementById("inusers");
