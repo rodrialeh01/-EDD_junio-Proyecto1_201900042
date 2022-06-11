@@ -247,7 +247,8 @@ function Login(user,password){
         alert("Bienvenido Admin")
         location.href = "../Administrador/carga.html"
     }else if(lusuarios.verificarusuario(user,password)==false){
-        alert("Hola Usuario")
+        alert("Bienvenido " + user)
+        location.href = "../Usuario/librera1.html"
     }else if(lusuarios.verificarusuario(user,password)==null){
         alert("credenciales incorrectas")
     }
