@@ -419,7 +419,7 @@ class MatrizDispersa{
         }
     }
     graficar(){
-        let codigodot = "digraph G { \nlabel=\"Libros de categoria Thriller\" fontsize=28;\nnode [shape=box, height=0.8];\nPrimero[ label = \"0\", width = 1, group = 1];"
+        let codigodot = "digraph G { \ngraph [pad=\"0.5\", nodesep=\"1\", ranksep=\"1\"];\nlabel=\"Libros de categoria Thriller\" fontsize=28;\nnode [shape=box, height=0.8];\nPrimero[ label = \"0\", width = 1, group = 1];"
         //FILAS
         let temporalfila = this.filas.primero
         let idfila = ""
@@ -470,7 +470,6 @@ class MatrizDispersa{
             direccion += "Columna" + actual.y + "; "
             if(temporalcolumna.siguiente != null){
                 conexionescolumnas += "\nColumna" + actual.y + " -> Columna" + temporalcolumna.siguiente.acceso.y + ";"
-                conexionescolumnas += "\nColumna" + temporalcolumna.siguiente.acceso.y + " -> Columna" + actual.y + ";"
             }
             while(actual != null){
                 if(primero1 == true){
