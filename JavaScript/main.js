@@ -182,8 +182,6 @@ function agregarPrimerAdmin(){
     console.log(JSON.stringify(users.primero.usuario))
     localStorage.setItem("lista_usuarios", "["+JSON.stringify(users.primero.usuario)+"]")
 }
-agregarPrimerAdmin()
-
 //FUNCION PARA LA CARGA MASIVA DE USUARIOS
 function CargaMasivaUsuarios(){
     let input_archivo = document.getElementById("inusers");
@@ -234,8 +232,8 @@ function CargaMasivaUsuarios(){
 }
 
 function Login(user,password){
-    let usuarios = JSON.parse(localStorage.getItem("lista_usuarios"))
     let lusuarios = new ListaUsuarios()
+    let usuarios = JSON.parse(localStorage.getItem("lista_usuarios"))
     for(let i = 0;i<usuarios.length;i++){
         nuevo = new Usuario(usuarios[i].dpi,usuarios[i].nombre,usuarios[i].username,usuarios[i].correo,usuarios[i].rol,usuarios[i].contrasenia,usuarios[i].telefono)
         lusuarios.insertarusuario(nuevo)

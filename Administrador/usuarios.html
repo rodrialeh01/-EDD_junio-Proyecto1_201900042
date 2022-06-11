@@ -104,12 +104,12 @@
          function graficarusuarios(){
             let usersguardados =  JSON.parse(localStorage.getItem("lista_usuarios"))
             console.log(usersguardados)
-            let users = new ListaUsuarios()
+            let lusers = new ListaUsuarios()
             for(let i = 0; i<usersguardados.length; i++){
                let cargau = new Usuario(usersguardados[i].dpi,usersguardados[i].nombre,usersguardados[i].username,usersguardados[i].correo,usersguardados[i].rol,usersguardados[i].contrasenia,usersguardados[i].telefono)
-               users.insertarusuario(cargau)
+               lusers.insertarusuario(cargau)
             }
-            users.graficar()
+            lusers.graficar()
             let listagraphviz =  localStorage.getItem("dot_users")
             d3.select("#listausers").graphviz()
                   .width(1500)
