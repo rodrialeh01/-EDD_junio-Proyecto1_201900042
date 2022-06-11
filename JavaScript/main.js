@@ -13,6 +13,7 @@ class NodoLibroU{
         this.abajo = null
     }
 }
+
 class ListaUsuarios{
     constructor(){
         this.primero = null;
@@ -77,8 +78,86 @@ class ListaUsuarios{
         }
     }
     graficar(){
-        let usuario = this.primero
-        let libro = this.primero
+        if(this.tamanio!= 0){
+            let temporal = this.primero
+            let codigodot = "digraph G {\n\tnode [shape=box];\n\trankdir=\"LR\";\nlabel=\"Lista de Listas de Usuarios\"\n"
+            let nodos = ""
+            let conexiones = ""
+            let numnodo = 0
+            let numnodolib = 1
+            let contador = 0
+            while(contador!= this.tamanio){
+                nodos +="\tNodo" + numnodo + "[label=\"Nombre: " + temporal.usuario.nombre + "\\nUsername: "+temporal.usuario.username+"\\nDPI: "+temporal.usuario.dpi+"\"];\n"
+                if(temporal.abajo != null){
+                    let temporal2 = temporal
+                    while(temporal2 != null){
+                        if (temporal2.abajo != null){
+                            nodos +="\tNodo" + str(numnodo)+str(numnodolib) + "[label=\"Nombre del libro: " + temporal2.abajo.nombre +"\"];\n"
+                        }
+                        temporal2 = temporal2.abajo
+                        numnodolib++
+                    }
+                }
+                temporal = temporal.siguiente
+                contador++
+                numnodo++
+            }
+            contador = 0
+            numnodo = 0
+            numnodolib = 0
+            while(contador!= this.tamanio-1){
+                let numaux = numnodo +1
+                conexiones += "\tNodo" + numnodo + "->Nodo" + numaux + ";\n"
+                numnodo++
+                contador++
+            }
+            conexiones += "\tNodo" + (this.tamanio-1) + "->Nodo0;\n"
+
+            codigodot += nodos += conexiones + "}"
+            localStorage.setItem("dot_users",codigodot)
+            console.log(codigodot)
+        }else{
+            console.log(":'v")
+        }
+    }
+    verificarusuario(username, contrasenia){
+        if(this.validarususario(username,contrasenia) == true){
+            if(this.retornarusuariologin(username,contrasenia).rol == "Administrador"){
+                return true
+            }else if(this.retornarusuariologin(username,contrasenia).rol == "Usuario"){
+                return false
+            }
+        }else{
+            return null
+        }
+    }
+    validarususario(usuario,contrasenia){
+        let temporal = this.primero
+        let contador = 0
+        while(contador!= this.tamanio){
+            if(temporal.usuario.username == usuario){
+                if(temporal.usuario.contrasenia == contrasenia){
+                    return true
+                }
+            }
+            temporal = temporal.siguiente
+            contador++
+        }
+        return false
+    }
+    retornarusuariologin(username,contrasenia){
+        let temporal = this.primero
+        let contador = 0
+        while(contador!= this.tamanio){
+            if(temporal.usuario.username == username){
+                if(temporal.usuario.contrasenia == contrasenia){
+                    return temporal.usuario
+                }
+            }
+            temporal = temporal.siguiente
+            contador++
+        }
+        return null
     }
 }
 
@@ -95,20 +174,26 @@ class Usuario{
     }
 }
 //-------------------LOGICA DE USUARIOS--------------------
-//IMPLEMENTACION DE LA LISTA DE USUARIOS
-var users = new ListaUsuarios()
-localStorage.setItem("lista-usuarios",users)
-//FUNCION PARA AGREGAR LOS USUARIOS A LA LISTA
-function agregarUsuarios(_dpi,_nombre,_username,_correo,_rol,_contrasenia,_telefono){
-    let nuevo = new Usuario(_dpi,_nombre,_username,_correo,_rol,_contrasenia,_telefono)
+
+function agregarPrimerAdmin(){
+    let users = new ListaUsuarios()
+    let nuevo = new Usuario(2354168452525,"Wilfred Perez","Wilfred","admin@edd.usac.edu.gt","Administrador","123","+502 (123) 123-4567")
     users.insertarusuario(nuevo)
-    localStorage.setItem("lista-usuarios", users)
+    console.log(JSON.stringify(users.primero.usuario))
+    localStorage.setItem("lista_usuarios", "["+JSON.stringify(users.primero.usuario)+"]")
 }
+agregarPrimerAdmin()
 
 //FUNCION PARA LA CARGA MASIVA DE USUARIOS
 function CargaMasivaUsuarios(){
     let input_archivo = document.getElementById("inusers");
     let archivo = input_archivo.files[0];
+    let usersguardados = JSON.parse(localStorage.getItem("lista_usuarios"))
+    let users = new ListaUsuarios()
+    for(let i = 0; i<usersguardados.length; i++){
+        let cargau = new Usuario(usersguardados[i].dpi,usersguardados[i].nombre,usersguardados[i].username,usersguardados[i].correo,usersguardados[i].rol,usersguardados[i].contrasenia,usersguardados[i].telefono)
+        users.insertarusuario(cargau)
+    }
     if (!archivo) {
         return;
     }
@@ -124,14 +209,47 @@ function CargaMasivaUsuarios(){
             let rol = jtexto[i].rol;
             let contrasenia = jtexto[i].contrasenia
             let telefono = jtexto[i].telefono
-            agregarUsuarios(dpi,nombre,username,correo,rol,contrasenia,telefono)
+            let nuevo = new Usuario(dpi,nombre,username,correo,rol,contrasenia,telefono)
+            users.insertarusuario(nuevo)
         }
+        //localStorage.setItem("listaUsuarios", JSON.stringify(users))
+        let contador = 0
+        let temporal = users.primero
+        let list = "["
+        while(contador != users.tamanio){
+            if(temporal == users.ultimo){
+                list += JSON.stringify(temporal.usuario) + "]"
+                break
+            }
+            list += JSON.stringify(temporal.usuario) + ","
+            temporal = temporal.siguiente
+            contador++
+        }
+        console.log(list)
+        localStorage.setItem("lista_usuarios", list)
         users.mostrarusuarios()
+        alert("Ha cargado los usuarios exitosamente")
     });
     reader.readAsText(archivo, "UTF-8");
 }
 
-//================================================LIBROS===================================
+function Login(user,password){
+    let usuarios = JSON.parse(localStorage.getItem("lista_usuarios"))
+    let lusuarios = new ListaUsuarios()
+    for(let i = 0;i<usuarios.length;i++){
+        nuevo = new Usuario(usuarios[i].dpi,usuarios[i].nombre,usuarios[i].username,usuarios[i].correo,usuarios[i].rol,usuarios[i].contrasenia,usuarios[i].telefono)
+        lusuarios.insertarusuario(nuevo)
+    }
+    if(lusuarios.verificarusuario(user,password)==true){
+        alert("Bienvenido Admin")
+        location.href = "../Administrador/carga.html"
+    }else if(lusuarios.verificarusuario(user,password)==false){
+        alert("Hola Usuario")
+    }else if(lusuarios.verificarusuario(user,password)==null){
+        alert("credenciales incorrectas")
+    }
+}
+//================================================================LIBROS======================================================
 
 //-----------MATRIZ DISPERSA------------
 class NodoCabeceraMD{

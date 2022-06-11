@@ -85,9 +85,9 @@
                            </div>
                         </div>
                      </div>
-                     <div class="full padding_infor_info">
-                        
-                     </div>
+                        <div id="listausers" class="full padding_infor_info">
+                           
+                        </div>
                   </div>
                </div>
             </div>
@@ -96,6 +96,28 @@
             </div>
          </div>
       </div>
+      <script src="//d3js.org/d3.v5.min.js"></script>
+      <script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>
+      <script src="https://unpkg.com/d3-graphviz@3.0.5/build/d3-graphviz.js"></script>
+      <script src="../JavaScript/main.js"></script>
+      <script>
+         function graficarusuarios(){
+            let usersguardados =  JSON.parse(localStorage.getItem("lista_usuarios"))
+            console.log(usersguardados)
+            let users = new ListaUsuarios()
+            for(let i = 0; i<usersguardados.length; i++){
+               let cargau = new Usuario(usersguardados[i].dpi,usersguardados[i].nombre,usersguardados[i].username,usersguardados[i].correo,usersguardados[i].rol,usersguardados[i].contrasenia,usersguardados[i].telefono)
+               users.insertarusuario(cargau)
+            }
+            users.graficar()
+            let listagraphviz =  localStorage.getItem("dot_users")
+            d3.select("#listausers").graphviz()
+                  .width(1500)
+                  .height(3000)
+                  .renderDot(listagraphviz)         
+         }
+         graficarusuarios()
+      </script>
       <!-- jQuery -->
       <script src="js/jquery.min.js"></script>
       <script src="js/popper.min.js"></script>

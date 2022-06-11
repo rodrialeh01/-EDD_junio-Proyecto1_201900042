@@ -39,20 +39,20 @@
 					
 					
 					<div class="wrap-input100 validate-input" data-validate = "Ingrese un nombre de usuario">
-						<input class="input100" type="text">
+						<input id="user" class="input100" type="text">
 						<span class="focus-input100"></span>
 						<span class="label-input100">Usuario</span>
 					</div>
 					
 					
 					<div class="wrap-input100 validate-input" data-validate="Ingrese una contraseña">
-						<input class="input100" type="password" name="pass">
+						<input id="pass" class="input100" type="password" name="pass">
 						<span class="focus-input100"></span>
 						<span class="label-input100">Contraseña</span>
 					</div>
 
 					<div class="container-login100-form-btn">
-						<button class="login100-form-btn">
+						<button type="button"class="login100-form-btn" onclick="entrar()">
 							Login
 						</button>
 					</div>
@@ -89,6 +89,15 @@
 	<script src="vendor/countdowntime/countdowntime.js"></script>
 <!--===============================================================================================-->
 	<script src="js/main.js"></script>
-
+	<script src="../JavaScript/main.js"></script>
+	<script>
+		function entrar(){
+			let usuario_ingresado = document.getElementById("user").value
+			console.log(usuario_ingresado)
+			let contrasenia_ingresada = document.getElementById("pass").value
+			console.log(contrasenia_ingresada)
+			Login(usuario_ingresado,contrasenia_ingresada)
+		}
+	</script>
 </body>
 </html>
