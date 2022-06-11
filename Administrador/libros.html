@@ -8,7 +8,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <meta name="viewport" content="initial-scale=1, maximum-scale=1">
       <!-- site metas -->
-      <title>Carga Masiva - Libreria CATSBOOKS</title>
+      <title>Cola de Disponibilidad - Libreria CATSBOOKS</title>
       <meta name="keywords" content="">
       <meta name="description" content="">
       <meta name="author" content="">
@@ -57,6 +57,7 @@
                    <li><a href="carga.html" ><i class="fa fa-folder-open"></i> <span>Carga Masiva</span></a></li>
                    <li class="active"><a href="usuarios.html"><i class="fa fa-users red_color"></i> <span>Vista de Usuarios</span></a></li>
                    <li><a href="libros.html"><i class="fa fa-book blue2_color"></i> <span>Cola de libros pendientes</span></a></li>
+                   <li><a href="../Login/Login.html"><i class="fa fa-sign-out yellow_color"></i> <span>Salir</span></a></li>
                 </ul>
              </div>
             </nav>
@@ -85,7 +86,7 @@
                            </div>
                         </div>
                      </div>
-                     <div class="full padding_infor_info">
+                     <div id="matrizlibrost"class="full padding_infor_info">
                         
                      </div>
                   </div>
@@ -96,6 +97,32 @@
             </div>
          </div>
       </div>
+      <script src="//d3js.org/d3.v5.min.js"></script>
+      <script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>
+      <script src="https://unpkg.com/d3-graphviz@3.0.5/build/d3-graphviz.js"></script>
+      <script src="../JavaScript/main.js"></script>
+      <script>
+         function graficarmatriz(){
+            let matriz_thriller = new MatrizDispersa()
+            let librosguardadost = JSON.parse(localStorage.getItem("matriz_libros_thriller"))
+            console.log(librosguardadost)
+            if(librosguardadost != null){
+               for(let i = 0;i<librosguardadost.length;i++){
+                     let nuevo1 = new Libro(librosguardadost[i].isbn,librosguardadost[i].autor,librosguardadost[i].nombre,librosguardadost[i].cantidad,librosguardadost[i].fila,librosguardadost[i].columna,librosguardadost[i].paginas,librosguardadost[i].categoria)
+                     matriz_thriller.insertar(parseInt(librosguardadost[i].fila),parseInt(librosguardadost[i].columna),nuevo1)
+               }
+            }
+            matriz_thriller.graficar()
+            let matrizgraphviz =  localStorage.getItem("dot_matrizdispersa")
+            console.log("***************************************************")
+            console.log(matrizgraphviz)
+            d3.select("#matrizlibrost").graphviz()
+                  .width(1500)
+                  .height(3000)
+                  .renderDot(matrizgraphviz) 
+         }
+         graficarmatriz()
+      </script>
       <!-- jQuery -->
       <script src="js/jquery.min.js"></script>
       <script src="js/popper.min.js"></script>

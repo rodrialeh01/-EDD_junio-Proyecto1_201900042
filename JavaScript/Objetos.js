@@ -11,11 +11,13 @@ export class Usuario{
 }
 
 export class Libro{
-    constructor(_isbn,_autor,_nombre,_cantidad,_paginas,_categoria){
+    constructor(_isbn,_autor,_nombre,_cantidad,_fila,_columna,_paginas,_categoria){
         this.isbn = _isbn
         this.autor = _autor
         this.nombre = _nombre
         this.cantidad = _cantidad
+        this.fila = _fila
+        this.columna = _columna
         this.paginas = _paginas
         this.categoria = _categoria
     }

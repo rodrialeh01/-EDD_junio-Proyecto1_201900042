@@ -174,14 +174,14 @@ class Usuario{
     }
 }
 //-------------------LOGICA DE USUARIOS--------------------
-
+// AGREGA AL PRIMER USUARIO POR DEFECTO
 function agregarPrimerAdmin(){
     let users = new ListaUsuarios()
     let userstotales = JSON.parse(localStorage.getItem("lista_usuarios"))
     if(userstotales == null){
         let nuevo = new Usuario(2354168452525,"Wilfred Perez","Wilfred","admin@edd.usac.edu.gt","Administrador","123","+502 (123) 123-4567")
         users.insertarusuario(nuevo)
-        console.log(JSON.stringify(users.primero.usuario))
+        //console.log(JSON.stringify(users.primero.usuario))
         localStorage.setItem("lista_usuarios", "["+JSON.stringify(users.primero.usuario)+"]")
     }
 }
@@ -235,6 +235,7 @@ function CargaMasivaUsuarios(){
     reader.readAsText(archivo, "UTF-8");
 }
 
+//METODO PARA VALIDAR EL LOGIN
 function Login(user,password){
     let lusuarios = new ListaUsuarios()
     let usuarios = JSON.parse(localStorage.getItem("lista_usuarios"))
@@ -326,7 +327,7 @@ class NodoCelda{
 class MatrizDispersa{
     constructor(){
         this.filas = new ListaCabeceraMD('fila')
-        this.columnas = ListaCabeceraMD('columna')
+        this.columnas = new ListaCabeceraMD('columna')
     }
     insertar(coor_x,coor_y,libro){
         let nuevo = new NodoCelda(coor_x,coor_y, libro)
@@ -334,11 +335,11 @@ class MatrizDispersa{
         let celda_y = this.columnas.obtenercabecera(coor_y)
 
         if(celda_x==null){
-            celda_x = NodoCabeceraMD(coor_x)
+            celda_x = new NodoCabeceraMD(coor_x)
             this.filas.insertar_nodoCabecera(celda_x)
         }
         if(celda_y == null){
-            celda_y = NodoCabeceraMD(coor_y)
+            celda_y = new NodoCabeceraMD(coor_y)
             this.columnas.insertar_nodoCabecera(celda_y)
         }
 
@@ -403,12 +404,135 @@ class MatrizDispersa{
             }
         }
     }
+    retornarNodo(fila,columna){
+        try{
+            let temporal = this.filas.obtenercabecera(fila).acceso
+            while(temporal != null){
+                if(temporal.x == fila && temporal.y == columna){
+                    return temporal
+                }
+                temporal = temporal.derecha
+            }
+            return null
+        }catch{
+            return null
+        }
+    }
+    graficar(){
+        let codigodot = "digraph G { \nlabel=\"Libros de categoria Thriller\" fontsize=28;\nnode [shape=box, height=0.8];\nPrimero[ label = \"0\", width = 1, group = 1];"
+        //FILAS
+        let temporalfila = this.filas.primero
+        let idfila = ""
+        let conexionesfilas = ""
+        let nodosinteriores = ""
+        let direccioninteriores = ""
+        while(temporalfila != null){
+            let primero = true
+            let actual = temporalfila.acceso
+            idfila += "\nFila" + actual.x+" [label = \"Repisa #" + actual.x + "\" group= 1];"
+            if(temporalfila.siguiente != null){
+                conexionesfilas += "\nFila" + actual.x + "->Fila" + temporalfila.siguiente.acceso.x + ";"
+            }
+            direccioninteriores +="\n{ rank = same; Fila" + actual.x + "; "
+            while(actual != null){
+                nodosinteriores += "\nNodoF" + actual.x + "_C" + actual.y + "[label=\"" + actual.libro.nombre + "\" group=" + actual.y + "];"
+                direccioninteriores += "NodoF" + actual.x + "_C" + actual.y + "; "
+                if(primero == true){
+                    nodosinteriores += "\nFila"+actual.x + "-> NodoF" + actual.x + "_C" + actual.y + ";"
+                    if(actual.derecha!= null){
+                        nodosinteriores += "\nNodoF" + actual.x + "_C" + actual.y + "-> NodoF" + actual.derecha.x + "_C" + actual.derecha.y + ";"
+                        nodosinteriores += "\nNodoF" + actual.derecha.x + "_C" + actual.derecha.y + "-> NodoF" + actual.x + "_C" + actual.y + ";"
+                        primero = false
+                    }else{
+                        if(actual.derecha != null){
+                            nodosinteriores += "\nNodoF" + actual.x + "_C" + actual.y + "-> NodoF" + actual.derecha.x + "_C" + actual.derecha.y + ";"
+                            nodosinteriores += "\nNodoF" + actual.derecha.x + "_C" + actual.derecha.y + "-> NodoF" + actual.x + "_C" + actual.y + ";"
+                        }
+                    }
+                }
+                actual = actual.derecha
+            }
+            temporalfila = temporalfila.siguiente
+            direccioninteriores+="}"
+        }
+        codigodot+= idfila + "\nedge[dir=\"both\"];" + conexionesfilas + "\nedge[dir=\"both\"];" 
+        //COLUMNAS
+        let temporalcolumna = this.columnas.primero
+        let primeraC = this.columnas.primero.acceso.y
+        let primeraF = this.filas.primero.acceso.x
+        let idcolumna = ""
+        let conexionescolumnas = ""
+        let direccion = "\n{rank=same; Primero;"
+        while(temporalcolumna != null){
+            let primero1 = true
+            let actual = temporalcolumna.acceso
+            idcolumna+="\nColumna"+actual.y +" [label = \"Libros de la \\nColumna #" + actual.y + "\" group= "+actual.y+"];"
+            direccion += "Columna" + actual.y + "; "
+            if(temporalcolumna.siguiente != null){
+                conexionescolumnas += "\nColumna" + actual.y + " -> Columna" + temporalcolumna.siguiente.acceso.y + ";"
+                conexionescolumnas += "\nColumna" + temporalcolumna.siguiente.acceso.y + " -> Columna" + actual.y + ";"
+            }
+            while(actual != null){
+                if(primero1 == true){
+                    codigodot+="\nColumna"+ actual.y + " -> NodoF" + actual.x + "_C" + actual.y + ";"
+                    if(actual.abajo != null){
+                        codigodot+="\nNodoF" + actual.x + "_C" + actual.y + " -> NodoF"+ actual.abajo.x + "_C" + actual.abajo.y + ";"
+                        codigodot+="\nNodoF" + actual.abajo.x + "_C" + actual.abajo.y + " -> NodoF"+ actual.x + "_C" + actual.y + ";"
+                    }
+                    primero1 = false
+                }else{
+                    if(actual.abajo != null){
+                        codigodot+="\nNodoF" + actual.x + "_C" + actual.y + " -> NodoF"+ actual.abajo.x + "_C" + actual.abajo.y + ";"
+                        codigodot+="\nNodoF" + actual.abajo.x + "_C" + actual.abajo.y + " -> NodoF"+ actual.x + "_C" + actual.y + ";"
+                    }
+                }
+                actual = actual.abajo
+            }
+            temporalcolumna = temporalcolumna.siguiente
+        }
+        codigodot += idcolumna
+        codigodot += conexionescolumnas
+        codigodot += "\nPrimero -> Fila" + primeraF + "; \nPrimero -> Columna" + primeraC + ";"
+        codigodot += direccion + "}"
+        codigodot += nodosinteriores
+        codigodot += direccioninteriores
+        codigodot += "\n}"
+        localStorage.setItem("dot_matrizdispersa",codigodot)
+    }
 }
 
+class Libro{
+    constructor(_isbn,_autor,_nombre,_cantidad,_fila,_columna,_paginas,_categoria){
+        this.isbn = _isbn
+        this.autor = _autor
+        this.nombre = _nombre
+        this.cantidad = _cantidad
+        this.fila = _fila
+        this.columna = _columna
+        this.paginas = _paginas
+        this.categoria = _categoria
+    }
+}
 //CARGA MASIVA DE LIBROS
 function CargaLibros(){
+    let matriz_thriller = new MatrizDispersa()
+    //let matriz_fantasia = new MatrizOrtogonal()
     let input_archivo = document.getElementById("inlibros");
     let archivo = input_archivo.files[0];
+    let librosguardadost = JSON.parse(localStorage.getItem("matriz_libros_thriller"))
+    let librosguardadosf = JSON.parse(localStorage.getItem("matriz_libros_fantasia"))
+    if(librosguardadost != null){
+        for(let i = 0;i<librosguardadost.length;i++){
+            let nuevo1 = new Libro(librosguardadost[i].isbn,librosguardadost[i].autor,librosguardadost[i].nombre,librosguardadost[i].cantidad,librosguardadost[i].fila,librosguardadost[i].columna,librosguardadost[i].paginas,librosguardadost[i].categoria)
+            matriz_thriller.insertar(parseInt(librosguardadost[i].fila),parseInt(librosguardadost[i].columna),nuevo1)
+        }
+    }
+    if(librosguardadosf != null){
+        for(let i = 0;i<librosguardadosf.length;i++){
+            let nuevo2 = new Libro(librosguardadosf[i].isbn,librosguardadosf[i].autor,librosguardadosf[i].nombre,librosguardadosf[i].cantidad,librosguardadosf[i].fila,librosguardadosf[i].columna,librosguardadosf[i].paginas,librosguardadosf[i].categoria)
+            
+        }
+    }
     if (!archivo) {
     return;
     }
@@ -418,22 +542,34 @@ function CargaLibros(){
         let jtexto = JSON.parse(texto)
         for(let i = 0; i<jtexto.length; i++){
             let isbn = jtexto[i].isbn;
-            console.log(isbn)
             let autor = jtexto[i].nombre_autor;
-            console.log(autor)
             let nombre = jtexto[i].nombre_libro;
-            console.log(nombre)
             let cantidad = jtexto[i].cantidad;
-            console.log(cantidad)
             let paginas = jtexto[i].paginas;
-            console.log(paginas)
             let categoria = jtexto[i].categoria
-            console.log(categoria)
             let fila = jtexto[i].fila
-            console.log(fila)
             let columna = jtexto[i].columna
-            console.log(columna)
+            if(categoria == "Thriller"){
+                let nuevo3 = new Libro(isbn,autor,nombre,cantidad,fila,columna,paginas,categoria)
+                console.log(nuevo3)
+                matriz_thriller.insertar(parseInt(fila),parseInt(columna),nuevo3)
+            }else if(categoria == "Fantasia"){
+
+            }
         }
+        let guardar = "["
+        for(let i = 0; i<=parseInt(matriz_thriller.filas.ultimo.id); i++){
+            for(let j = 0; j<=parseInt(matriz_thriller.columnas.ultimo.id); j++){
+                let nodom = matriz_thriller.retornarNodo(i,j)
+                if(nodom != null){
+                    guardar+= JSON.stringify(nodom.libro) + ","
+                }
+            }
+        }
+        const guardar2 = guardar.substring(0,guardar.length-1)
+        guardar = guardar2 +"]"
+        console.log(guardar)
+        localStorage.setItem("matriz_libros_thriller",guardar)
     });
     reader.readAsText(archivo, "UTF-8");
 }
