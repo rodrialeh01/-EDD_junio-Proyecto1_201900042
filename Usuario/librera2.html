@@ -52,7 +52,7 @@
                   </div>
                </div>
                <div class="sidebar_blog_2">
-                  <h4>Usuario</h4>
+                  <h4 id="mostraruser"></h4>
                   <ul class="list-unstyled components">
                      <li>
                         <a href="#libreras" data-toggle="collapse" class="dropdown-toggle"><i class="fa fa-bars purple_color"></i> <span>Libreras</span></a>
@@ -110,11 +110,14 @@
                                       </div>
                                       <div class="price_table_inner">
                                          <div class="cont_table_price_blog">
-                                            <p style="color: #841621">NOMBRE DEL LIBRO</p>
+                                            <p id="nombre_l" style="color: #841621"></p>
                                          </div>
-                                         <div class="cont_table_price">
-                                            PILA
+                                         <div id="pilac" class="cont_table_price_blog">
+                                            
                                          </div>
+                                         <div class="cont_table_price_blog">
+                                          <h1 id="mostrarc"></h1>
+                                          </div>
                                       </div>
                                    </div>
                                 </div>
@@ -128,12 +131,33 @@
                                   </div>
                                </div>
                                <div class="full inner_elements">
-                                <div class="price_table_bottom">
-                                    <div class="center"><button class="main_bt">Seleccionar</button></div>
-                                </div>
-                                <div class="price_table_bottom">
-                                    <div class="center"><button class="main_bt">Comprar</button></div>
-                                </div>
+                                 <div class="login_form">
+                                    <form>
+                                       <fieldset>
+                                          <div class="field">
+                                             <label class="label_field">No. de Repisa</label>
+                                             <input id="filam"type="number" name="number" placeholder="No. de Repisa" />
+                                          </div>
+                                          <div class="field">
+                                             <label class="label_field">No. Columna</label>
+                                             <input id="columnam"type="number" name="number" placeholder="No. de Columna" />
+                                          </div>
+                                          <br>
+                                          <div class="field margin_0">
+                                             <div class="center"><button type="button" onclick="mostrarpila()"class="main_bt">Seleccionar</button></div>
+                                          </div>
+                                          <br>
+                                          <div class="field">
+                                             <label class="label_field">Cantidad:</label>
+                                             <input id="cantidad"type="number" name="number" placeholder="No. de Libros a Comprar" />
+                                          </div>
+                                          <br>
+                                          <div class="field margin_0">
+                                             <div class="center"><button class="main_bt">Comprar</button></div>
+                                          </div>
+                                       </fieldset>
+                                    </form>
+                                 </div>
                                </div>
                             </div>
                          </div>
@@ -151,33 +175,140 @@
       <script src="https://unpkg.com/d3-graphviz@3.0.5/build/d3-graphviz.js"></script>
       <script src="../JavaScript/main.js"></script>
       <script>
-        function graficarmatriz(){
+         var usuariolog = sessionStorage.getItem("usuariologueado")
+         function mostraru(){
+            let nombre = document.getElementById("mostraruser")
+            let obj = JSON.parse(usuariolog)
+            nombre.innerHTML = "Usuario @"+obj.username
+         }
+         mostraru()
+         function graficarmatriz(){
             let matriz_thriller = new MatrizDispersa()
             let librosguardadost = JSON.parse(localStorage.getItem("matriz_libros_thriller"))
             console.log(librosguardadost)
             if(librosguardadost != null){
-                for(let i = 0;i<librosguardadost.length;i++){
+               for(let i = 0;i<librosguardadost.length;i++){
                         let nuevo1 = new Libro(librosguardadost[i].isbn,librosguardadost[i].autor,librosguardadost[i].nombre,librosguardadost[i].cantidad,librosguardadost[i].fila,librosguardadost[i].columna,librosguardadost[i].paginas,librosguardadost[i].categoria)
                         matriz_thriller.insertar(parseInt(librosguardadost[i].fila),parseInt(librosguardadost[i].columna),nuevo1)
-                }
+               }
             }
             matriz_thriller.graficarlibrera()
             let matrizgraphviz =  localStorage.getItem("librera_matrizdispersa")
             console.log("***************************************************")
             console.log(matrizgraphviz)
             d3.select("#libreramatrizlibrost").graphviz()
-                .width(1500)
-                .height(950)
-                .renderDot(matrizgraphviz) 
+               .width(1500)
+               .height(950)
+               .renderDot(matrizgraphviz) 
             matriz_thriller.graficar()
             let matrizgraphviz2 =  localStorage.getItem("dot_matrizdispersa")
             d3.select("#matrizlibrost").graphviz()
-                .width(1500)
-                .height(950)
-                .renderDot(matrizgraphviz2) 
-
-         }
+               .width(1500)
+               .height(950)
+               .renderDot(matrizgraphviz2) 
+            }
          graficarmatriz()
+         function mostrarpila(){
+            let matriz_thriller = new MatrizDispersa()
+            let pila = new Pila()
+            let lugarnombre = document.getElementById("nombre_l")
+            let mc = document.getElementById("mostrarc")
+            let librosguardadost = JSON.parse(localStorage.getItem("matriz_libros_thriller"))
+            console.log(librosguardadost)
+            if(librosguardadost != null){
+               for(let i = 0;i<librosguardadost.length;i++){
+                        let nuevo1 = new Libro(librosguardadost[i].isbn,librosguardadost[i].autor,librosguardadost[i].nombre,librosguardadost[i].cantidad,librosguardadost[i].fila,librosguardadost[i].columna,librosguardadost[i].paginas,librosguardadost[i].categoria)
+                        matriz_thriller.insertar(parseInt(librosguardadost[i].fila),parseInt(librosguardadost[i].columna),nuevo1)
+               }
+            }
+            let fila = document.getElementById("filam").value
+            console.log(fila)
+            let columna = document.getElementById("columnam").value
+            console.log(columna)
+            let nodo = matriz_thriller.retornarNodo(parseInt(fila),parseInt(columna))
+            console.log(nodo)
+            if(nodo == null){
+               alert("Ingrese la fila y columna de un libro que se situe en la librera")
+            }else{
+               let cantidad = parseInt(nodo.libro.cantidad)
+               lugarnombre.innerHTML = nodo.libro.nombre
+               if(cantidad == 0){
+                  d3.select("#pilac").graphviz()
+                     .width(500)
+                     .height(500)
+                     .renderDot("digraph Pila{\n}") 
+                  mc.innerHTML= "Cantidad: " + nodo.libro.cantidad
+               }else{
+                  for(let i= 0; i<cantidad; i ++){
+                     pila.insertar(i)
+                  }
+                  pila.graficar()
+                  let pilag = localStorage.getItem("pila_cantidad")
+                  d3.select("#pilac").graphviz()
+                     .width(500)
+                     .height(500)
+                     .renderDot(pilag) 
+                  mc.innerHTML= "Cantidad: " + nodo.libro.cantidad
+               }
+            }
+         }
+         function comprar(){
+            let matriz_thriller = new MatrizDispersa()
+            let librosguardadost = JSON.parse(localStorage.getItem("matriz_libros_thriller"))
+            if(librosguardadost != null){
+               for(let i = 0;i<librosguardadost.length;i++){
+                        let nuevo1 = new Libro(librosguardadost[i].isbn,librosguardadost[i].autor,librosguardadost[i].nombre,librosguardadost[i].cantidad,librosguardadost[i].fila,librosguardadost[i].columna,librosguardadost[i].paginas,librosguardadost[i].categoria)
+                        matriz_thriller.insertar(parseInt(librosguardadost[i].fila),parseInt(librosguardadost[i].columna),nuevo1)
+               }
+            }
+            let cantidadcliente = document.getElementById("cantidad")
+            let fila = document.getElementById("filam").value
+            let columna = document.getElementById("columnam").value
+            let nodo = matriz_thriller.retornarNodo(parseInt(fila),parseInt(columna))
+            if(nodo == null){
+               alert("Ingrese la fila y columna de un libro que se situe en la librera")
+            }else{
+               if(cantidadcliente == ""){
+                  alert("Ingrese la cantidad de libros que quiere comprar")
+               }else{
+                  let clibro = nodo.libro.cantidad
+                  let ccliente = parseInt(cantidadcliente)
+                  let restante = clibro - ccliente
+                  let usersguardados =  JSON.parse(localStorage.getItem("lista_usuarios"))
+                  let lusers = new ListaUsuarios()
+                  for(let i = 0; i<usersguardados.length; i++){
+                     let cargau = new Usuario(usersguardados[i].dpi,usersguardados[i].nombre,usersguardados[i].username,usersguardados[i].correo,usersguardados[i].rol,usersguardados[i].contrasenia,usersguardados[i].telefono)
+                     lusers.insertarusuario(cargau)
+                  }
+                  let obj = JSON.parse(usuariolog)
+                  let user = lusers.retornarusuariologin(obj.nombre,obj.contrasenia)
+                  console.log(restante)
+                  if(restante>=0){
+                     nodo.libro.cantidad = restante
+                     let guardar = "["
+                     for(let i = 0; i<=parseInt(matriz_thriller.filas.ultimo.id); i++){
+                           for(let j = 0; j<=parseInt(matriz_thriller.columnas.ultimo.id); j++){
+                              let nodom = matriz_thriller.retornarNodo(i,j)
+                              if(nodom != null){
+                                 guardar+= JSON.stringify(nodom.libro) + ","
+                              }
+                           }
+                     }
+                     const guardar2 = guardar.substring(0,guardar.length-1)
+                     guardar = guardar2 +"]"
+                     localStorage.setItem("matriz_libros_thriller",guardar)
+                     let contador = 0
+                     while(contador!=ccliente){
+                        lusers.insertarlibro(nodo.libro.nombre,user.dpi)
+                        contador++
+                     }
+                     localStorage.setItem("lista_usuarios",lusers)
+                  }else{
+                     
+                  }
+               }
+            }
+         }
       </script>
       <script src="js/jquery.min.js"></script>
       <script src="js/popper.min.js"></script>

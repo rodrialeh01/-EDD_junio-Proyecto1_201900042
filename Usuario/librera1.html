@@ -52,7 +52,7 @@
                   </div>
                </div>
                <div class="sidebar_blog_2">
-                  <h4>Usuario</h4>
+                  <h4 id="mostraruser"></h4>
                   <ul class="list-unstyled components">
                      <li>
                         <a href="#libreras" data-toggle="collapse" class="dropdown-toggle"><i class="fa fa-bars purple_color"></i> <span>Libreras</span></a>
@@ -99,6 +99,16 @@
             </div>
          </div>
       </div>
+      <script src="../JavaScript/main.js"></script>
+      <script>
+         var usuariolog = sessionStorage.getItem("usuariologueado")
+         function mostraru(){
+            let nombre = document.getElementById("mostraruser")
+            let obj = JSON.parse(usuariolog)
+            nombre.innerHTML = "Usuario @"+obj.username
+         }
+         mostraru()
+      </script>
       <!-- jQuery -->
       <script src="js/jquery.min.js"></script>
       <script src="js/popper.min.js"></script>

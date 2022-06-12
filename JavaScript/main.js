@@ -56,7 +56,7 @@ class ListaUsuarios{
             if (user.abajo == null){
                 user.abajo = nuevo
             }else{
-                let temporal = user
+                let temporal = user.abajo
                 while(temporal != null){
                     if(temporal.abajo == null){
                         break
@@ -247,7 +247,9 @@ function Login(user,password){
         alert("Bienvenido Admin")
         location.href = "../Administrador/carga.html"
     }else if(lusuarios.verificarusuario(user,password)==false){
+        let us = lusuarios.retornarusuariologin(user,password)
         alert("Bienvenido " + user)
+        sessionStorage.setItem("usuariologueado",JSON.stringify(us))
         location.href = "../Usuario/librera1.html"
     }else if(lusuarios.verificarusuario(user,password)==null){
         alert("credenciales incorrectas")
@@ -581,6 +583,50 @@ class MatrizDispersa{
     }
 }
 
+//--------------PILA------------------
+class NodoPila{
+    constructor(_numero){
+        this.numero = _numero
+        this.abajo = null
+    }
+}
+class Pila{
+    constructor(){
+        this.cima = null
+        this.tamanio = 0
+    }
+    insertar(_numero){
+        let nuevo = new NodoPila(_numero)
+        nuevo.abajo = this.cima
+        this.cima = nuevo
+        this.tamanio++
+    }
+    sacar(){
+        this.cima = this.cima.abajo
+        this.tamanio--
+    }
+    graficar(){
+        let codigodot ="digraph Libro{\nrankdir=LR\nnode[shape=Mrecord];\n"
+        let nodos = "Ejemplar[style=\"filled\" fillcolor=\"#91CD83\" color=\"#309A17\" fontcolor=\"#91CD83\"label = \""
+        let actual = this.cima
+        while(actual != null){
+            if(actual.abajo == null){
+                nodos += actual.numero
+                actual = actual.abajo
+            }else{
+                nodos+= actual.numero +  "|"
+                actual = actual.abajo
+            }
+        }
+        nodos +="\"];\n"
+        codigodot+= nodos
+        codigodot += "}"
+        console.log(codigodot)
+        localStorage.setItem("pila_cantidad",codigodot)
+    }
+}
+
+//-----CLASE LIBRO------
 class Libro{
     constructor(_isbn,_autor,_nombre,_cantidad,_fila,_columna,_paginas,_categoria){
         this.isbn = _isbn
