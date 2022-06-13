@@ -171,6 +171,127 @@ class ListaUsuarios{
         }
         return null
     }
+    retornarCantidadLibros(_dpi){
+        let user = this.retornarusuario(_dpi)
+        if(user.abajo == null){
+            return 0
+        }else{
+            let temporal = user.abajo
+            let contador = 0
+            while(temporal != null){
+                contador++
+                temporal = temporal.abajo
+            }
+            return contador
+        }
+    }
+}
+
+//-------------LISTA DOBLEMENTE ENLAZADA----------------
+class NodoDU{
+    constructor(_usuario, _cantidad){
+        this.usuario = _usuario
+        this.cantidad = _cantidad
+        this.siguiente = null
+        this.anterior = null
+    }
+}
+
+class ListaDoble{
+    constructor(){
+        this.primero = null
+        this.ultimo = null
+        this.tamanio = 0
+    }
+    insertar(_usuario, _cantidad){
+        let nuevo = new NodoDU(_usuario,_cantidad)
+        if(this.primero == null && this.ultimo == null){
+            this.primero = nuevo
+            this.ultimo = nuevo
+        }else if(this.primero == this.ultimo){
+            this.ultimo = nuevo
+            this.primero.siguiente = this.ultimo
+            this.ultimo.anterior = this.primero
+        }else{
+            nuevo.anterior = this.ultimo
+            this.ultimo.siguiente = nuevo
+            this.ultimo = nuevo
+        }
+        this.tamanio++
+    }
+    ordenar(){
+        let actual = this.primero
+        let aux = actual.siguiente
+        if(actual!= null && aux != null){
+            let i = this.primero
+            while(i != null){
+                let j = i.siguiente
+                while(j != null){
+                    if(i.cantidad < j.cantidad){
+                        let temporal1 = i.cantidad
+                        let temporal2 = i.usuario
+                        i.cantidad = j.cantidad
+                        i.usuario = j.usuario
+                        j.cantidad = temporal1
+                        j.usuario = temporal2
+                    }
+                    j = j.siguiente
+                }
+                i = i.siguiente
+            }
+        }
+    }
+    graficar(){
+        if(this.tamanio!= 0){
+            let temporal = this.primero
+            let codigodot = "digraph G {\ngraph [pad=\"0.5\", nodesep=\"1\", ranksep=\"1\"];\nnode [shape=box];\nlabel=\"Lista Doblemente Enlazada\"\nfontsize=28;\nedge[dir=\"both\"]\n"
+            let nodos = ""
+            let conexiones = ""
+            let numnodo = 0
+            let contador = 0
+            let direccion = "\n{rank= same; "
+            if(this.tamanio <5){
+                while(contador!= this.tamanio){
+                    nodos +="Nodo" + numnodo + "[label=\"Nombre: " + temporal.usuario.nombre + "\\nCantidad: "+temporal.cantidad+"\"];\n"
+                    direccion += "Nodo" + numnodo + "; "
+                    temporal = temporal.siguiente
+                    contador++
+                    numnodo++
+                }
+                direccion += "}\n"
+                contador = 0
+                numnodo = 0
+                while(contador!= this.tamanio-1){
+                    let numaux = numnodo +1
+                    conexiones += "\tNodo" + numnodo + "->Nodo" + numaux + ";\n"
+                    numnodo++
+                    contador++
+                }
+                codigodot += nodos +direccion+ conexiones + "}"
+            }else{
+                while(contador!= 5){
+                    nodos +="Nodo" + numnodo + "[label=\"Nombre: " + temporal.usuario.nombre + "\\nCantidad: "+temporal.cantidad+"\", width=1];\n"
+                    direccion += "Nodo" + numnodo + "; "
+                    temporal = temporal.siguiente
+                    contador++
+                    numnodo++
+                }
+                direccion += "}\n"
+                contador = 0
+                numnodo = 0
+                while(contador!= 4){
+                    let numaux = numnodo +1
+                    conexiones += "\tNodo" + numnodo + "->Nodo" + numaux + ";\n"
+                    numnodo++
+                    contador++
+                }
+                codigodot += nodos +direccion+ conexiones + "}"
+            }
+            
+            localStorage.setItem("dot_top_users",codigodot)
+            console.log(codigodot)
+        }
+    }
 }
 
 //---------CLASE DE TIPO USUARIO-------------
@@ -750,7 +871,7 @@ function CargaLibros(){
                 console.log(nuevo3)
                 matriz_thriller.insertar(parseInt(fila),parseInt(columna),nuevo3)
             }else if(categoria == "Fantasia"){
-
+                
             }
         }
         let guardar = "["
@@ -770,6 +891,17 @@ function CargaLibros(){
     reader.readAsText(archivo, "UTF-8");
     alert("Ha cargado libros exitosamente")
 }
+
+class Autor{
+    constructor(_dpi,_nombre,_correo,_telefono,_direccion,_bibliografia){
+        this.dpi = _dpi
+        this.nombre = _nombre
+        this.correo = _correo
+        this.telefono = _telefono
+        this.direccion = _direccion
+        this.bibliografia = _bibliografia
+    }
+}
 function CargaAutores(){
     let input_archivo = document.getElementById("inautores");
     let archivo = input_archivo.files[0];
@@ -779,11 +911,8 @@ function CargaAutores(){
     const reader = new FileReader();
     reader.addEventListener("load", (event) => {
         let texto = event.target.result;
-        obtenerjsonautores(texto)
+        let jtexto = JSON.parse(texto)
+        console.log(jtexto)
     });
     reader.readAsText(archivo, "UTF-8");
-}
-function obtenerjsonautores(texto){
-    let jtexto = JSON.parse(texto)
-    console.log(jtexto)
 }
