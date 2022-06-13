@@ -110,6 +110,18 @@
             for(let i = 0; i<usersguardados.length; i++){
                let cargau = new Usuario(usersguardados[i].dpi,usersguardados[i].nombre,usersguardados[i].username,usersguardados[i].correo,usersguardados[i].rol,usersguardados[i].contrasenia,usersguardados[i].telefono)
                lusers.insertarusuario(cargau)
+               let libus = localStorage.getItem("libros_"+usersguardados[i].username)
+               if (libus != null){
+                  if(libus != "[]"){
+                     let l = libus.replace("[","")
+                     l = l.replace("]","")
+                     let li = l.split(",")
+                     console.log("-------"+li)
+                     for(let j = 0; j<li.length; j++){
+                        lusers.insertarlibro(li[j],usersguardados[i].dpi)
+                     }
+                  }
+               }
             }
             lusers.graficar()
             let listagraphviz =  localStorage.getItem("dot_users")

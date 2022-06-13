@@ -101,7 +101,27 @@
       <script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>
       <script src="https://unpkg.com/d3-graphviz@3.0.5/build/d3-graphviz.js"></script>
       <script src="../JavaScript/main.js"></script>
-
+      <script>
+         function graficarcolalibros(){
+            let pendientesguardados =  localStorage.getItem("cola_libros")
+            if(pendientesguardados != null){
+               let colajs = JSON.parse(pendientesguardados)
+               let cola = new Cola()
+               for(let i = 0;i<colajs.length;i++){
+                  let penviejo = new Pendiente(colajs[i].usuario,colajs[i].libro,colajs[i].cantidad) 
+                  cola.insertar(penviejo)
+               }
+               cola.graficar()
+               let listagraphviz =  localStorage.getItem("dot_cola_libros")
+               console.log(listagraphviz)
+               d3.select("#coladisponibilidad").graphviz()
+                     .width(1500)
+                     .height(3000)
+                     .renderDot(listagraphviz)    
+            }     
+         }
+         graficarcolalibros()
+      </script>
       <!-- jQuery -->
       <script src="js/jquery.min.js"></script>
       <script src="js/popper.min.js"></script>

@@ -153,7 +153,7 @@
                                           </div>
                                           <br>
                                           <div class="field margin_0">
-                                             <div class="center"><button class="main_bt">Comprar</button></div>
+                                             <div class="center"><button type="button" onclick="comprar()" class="main_bt">Comprar</button></div>
                                           </div>
                                        </fieldset>
                                     </form>
@@ -257,33 +257,49 @@
             let librosguardadost = JSON.parse(localStorage.getItem("matriz_libros_thriller"))
             if(librosguardadost != null){
                for(let i = 0;i<librosguardadost.length;i++){
-                        let nuevo1 = new Libro(librosguardadost[i].isbn,librosguardadost[i].autor,librosguardadost[i].nombre,librosguardadost[i].cantidad,librosguardadost[i].fila,librosguardadost[i].columna,librosguardadost[i].paginas,librosguardadost[i].categoria)
-                        matriz_thriller.insertar(parseInt(librosguardadost[i].fila),parseInt(librosguardadost[i].columna),nuevo1)
+                  let nuevo1 = new Libro(librosguardadost[i].isbn,librosguardadost[i].autor,librosguardadost[i].nombre,librosguardadost[i].cantidad,librosguardadost[i].fila,librosguardadost[i].columna,librosguardadost[i].paginas,librosguardadost[i].categoria)
+                  matriz_thriller.insertar(parseInt(librosguardadost[i].fila),parseInt(librosguardadost[i].columna),nuevo1)
                }
             }
-            let cantidadcliente = document.getElementById("cantidad")
+            let cantidadcliente = document.getElementById("cantidad").value
             let fila = document.getElementById("filam").value
             let columna = document.getElementById("columnam").value
             let nodo = matriz_thriller.retornarNodo(parseInt(fila),parseInt(columna))
             if(nodo == null){
                alert("Ingrese la fila y columna de un libro que se situe en la librera")
             }else{
-               if(cantidadcliente == ""){
+               if((cantidadcliente == "" && fila== "" && columna == "")||(cantidadcliente == "" && fila!= "" && columna != "")){
                   alert("Ingrese la cantidad de libros que quiere comprar")
-               }else{
+               }else if(cantidadcliente>=0){
                   let clibro = nodo.libro.cantidad
-                  let ccliente = parseInt(cantidadcliente)
+                  console.log(clibro)
+                  let ccliente = cantidadcliente
+                  console.log(ccliente)
                   let restante = clibro - ccliente
+                  console.log(restante)
                   let usersguardados =  JSON.parse(localStorage.getItem("lista_usuarios"))
                   let lusers = new ListaUsuarios()
                   for(let i = 0; i<usersguardados.length; i++){
                      let cargau = new Usuario(usersguardados[i].dpi,usersguardados[i].nombre,usersguardados[i].username,usersguardados[i].correo,usersguardados[i].rol,usersguardados[i].contrasenia,usersguardados[i].telefono)
                      lusers.insertarusuario(cargau)
+                     let libus = localStorage.getItem("libros_"+usersguardados[i].username)
+                     if (libus != null){
+                        if(libus != "[]"){
+                           let l = libus.replace("[","")
+                           l = l.replace("]","")
+                           let li = l.split(",")
+                           console.log("-------"+li)
+                           for(let j = 0; j<li.length; j++){
+                              lusers.insertarlibro(li[j],usersguardados[i].dpi)
+                           }
+                        }
+                     }
                   }
+                  console.log(lusers)
                   let obj = JSON.parse(usuariolog)
-                  let user = lusers.retornarusuariologin(obj.nombre,obj.contrasenia)
-                  console.log(restante)
+                  console.log(obj.dpi)
                   if(restante>=0){
+                     //ACTUALIZAR LA CANTIDAD DE LIBROS EN EL LIBRO 
                      nodo.libro.cantidad = restante
                      let guardar = "["
                      for(let i = 0; i<=parseInt(matriz_thriller.filas.ultimo.id); i++){
@@ -298,14 +314,105 @@
                      guardar = guardar2 +"]"
                      localStorage.setItem("matriz_libros_thriller",guardar)
                      let contador = 0
+                     //Inserta los libros comprados al usuario
                      while(contador!=ccliente){
-                        lusers.insertarlibro(nodo.libro.nombre,user.dpi)
+                        lusers.insertarlibro(nodo.libro.nombre,obj.dpi)
                         contador++
                      }
-                     localStorage.setItem("lista_usuarios",lusers)
+                     console.log(lusers)
+                     contador =0
+                     let temporal = lusers.primero
+                     while(contador != lusers.tamanio){
+                        let librosus = "["
+                        let temp2 = temporal.abajo
+                        while(temp2 != null){  
+                           if(temp2.abajo != null){
+                              librosus+= temp2.nombre + ","
+                              temp2 = temp2.abajo
+                           }else{
+                              librosus+= temp2.nombre
+                              temp2 = temp2.abajo
+                           }
+                        }
+                        librosus+="]"
+                        localStorage.setItem("libros_" + temporal.usuario.username,librosus)
+                        temporal = temporal.siguiente
+                        contador++
+                     }
+                     alert("Se compró con éxito " + ccliente + " libros de " + nodo.libro.nombre)
                   }else{
-                     
+                     let contador = 0
+                     //Inserta los libros comprados al usuario
+                     while(contador!=nodo.libro.cantidad){
+                        lusers.insertarlibro(nodo.libro.nombre,obj.dpi)
+                        contador++
+                     }
+                     console.log(lusers)
+                     nodo.libro.cantidad = 0
+                     //PROCESO DE AÑADIRLO A LA LISTA DE LISTAS
+                     let guardar = "["
+                     for(let i = 0; i<=parseInt(matriz_thriller.filas.ultimo.id); i++){
+                           for(let j = 0; j<=parseInt(matriz_thriller.columnas.ultimo.id); j++){
+                              let nodom = matriz_thriller.retornarNodo(i,j)
+                              if(nodom != null){
+                                 guardar+= JSON.stringify(nodom.libro) + ","
+                              }
+                           }
+                     }
+                     const guardar2 = guardar.substring(0,guardar.length-1)
+                     guardar = guardar2 +"]"
+                     localStorage.setItem("matriz_libros_thriller",guardar)
+                     contador =0
+                     let temporal = lusers.primero
+                     while(contador != lusers.tamanio){
+                        let librosus = "["
+                        let temp2 = temporal.abajo
+                        while(temp2 != null){  
+                           if(temp2.abajo != null){
+                              librosus+= temp2.nombre + ","
+                              temp2 = temp2.abajo
+                           }else{
+                              librosus+= temp2.nombre
+                              temp2 = temp2.abajo
+                           }
+                        }
+                        librosus+="]"
+                        localStorage.setItem("libros_" + temporal.usuario.username,librosus)
+                        temporal = temporal.siguiente
+                        contador++
+                     }
+
+                     //PROCESO DE AÑADIRLO A LA COLA
+                     let librosnegativos = restante*-1
+                     let cola = new Cola()
+                     let colaguardada = localStorage.getItem("cola_libros")
+                     if(colaguardada != null){
+                        let colajs = JSON.parse(colaguardada) 
+                        for(let i = 0;i<colajs.length;i++){
+                           let penviejo = new Pendiente(colajs[i].usuario,colajs[i].libro,colajs[i].cantidad) 
+                           cola.insertar(penviejo)
+                        }
+                     }
+                     let pennuevo = new Pendiente(obj.username,nodo.libro.nombre,librosnegativos)
+                     cola.insertar(pennuevo)
+                     let tempo = cola.primero
+                     let txt = "["
+                     while(tempo != null){
+                        if(tempo.siguiente == null){
+                           txt+=JSON.stringify(tempo.pendiente)+"]"
+                           tempo = tempo.siguiente
+                        }else{
+                           txt+=JSON.stringify(tempo.pendiente) + ","
+                           tempo = tempo.siguiente
+                        }
+                     }
+                     console.log("COLA DE LIBROS")
+                     console.log(txt)
+                     localStorage.setItem("cola_libros",txt)
+                     alert("Se añadieron " + nodo.libro.cantidad +" libros en tu compra\nPróximamente se te enviara la cantidad de " + librosnegativos + " libros a tu biblioteca virtual")
                   }
+               }else{
+                  alert("Ingrese la cantidad valida de libros que quiere comprar")
                }
             }
          }

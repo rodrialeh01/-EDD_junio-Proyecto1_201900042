@@ -40,7 +40,7 @@ class ListaUsuarios{
         let temporal = this.primero
         let contador = 0
         while(contador != this.tamanio){
-            if(_dpi == temporal.dpi){
+            if(_dpi == temporal.usuario.dpi){
                 return temporal
             }
             temporal = temporal.siguiente
@@ -51,6 +51,7 @@ class ListaUsuarios{
     //Inserta el nombre del libro en la lista de listas
     insertarlibro(_libro, _dpi){
         let user = this.retornarusuario(_dpi)
+        console.log(user)
         if(user != null){
             let nuevo = new NodoLibroU(_libro)
             if (user.abajo == null){
@@ -59,13 +60,13 @@ class ListaUsuarios{
                 let temporal = user.abajo
                 while(temporal != null){
                     if(temporal.abajo == null){
+                        temporal.abajo = nuevo
                         break
                     }
-                    temporal = temporal.siguiente
+                    temporal = temporal.abajo
                 }
-                temporal.abajo = nuevo
             }
-            
+            console.log("Se inserto el libro " + nuevo.nombre)
         }
     }
     mostrarusuarios(){
@@ -80,19 +81,30 @@ class ListaUsuarios{
     graficar(){
         if(this.tamanio!= 0){
             let temporal = this.primero
-            let codigodot = "digraph G {\n\tnode [shape=box];\n\trankdir=\"LR\";\nlabel=\"Lista de Listas de Usuarios\"\n"
+            let codigodot = "digraph G {\nnode [shape=box];\nlabel=\"Lista de Listas de Usuarios\"\nfontsize=28;"
             let nodos = ""
             let conexiones = ""
             let numnodo = 0
-            let numnodolib = 1
             let contador = 0
+            let direccion = "\n{rank= same; "
             while(contador!= this.tamanio){
-                nodos +="\tNodo" + numnodo + "[label=\"Nombre: " + temporal.usuario.nombre + "\\nUsername: "+temporal.usuario.username+"\\nDPI: "+temporal.usuario.dpi+"\"];\n"
+                let numnodolib = 1
+                nodos +="Nodo" + numnodo + "[label=\"Nombre: " + temporal.usuario.nombre + "\\nUsername: "+temporal.usuario.username+"\\nDPI: "+temporal.usuario.dpi+"\" group="+contador+"];\n"
+                direccion += "Nodo" + numnodo + "; "
                 if(temporal.abajo != null){
-                    let temporal2 = temporal
+                    let temporal2 = temporal.abajo
                     while(temporal2 != null){
-                        if (temporal2.abajo != null){
-                            nodos +="\tNodo" + str(numnodo)+str(numnodolib) + "[label=\"Nombre del libro: " + temporal2.abajo.nombre +"\"];\n"
+                        nodos +="Nodo" + numnodo+"_"+numnodolib + "[label=\"Libro: " + temporal2.nombre +"\" group="+contador+"];\n"
+                        temporal2 = temporal2.abajo
+                        numnodolib++
+                    }
+                    temporal2 = temporal.abajo
+                    numnodolib = 1
+                    conexiones += "Nodo" + numnodo + "->Nodo" +numnodo + "_" +numnodolib + ";\n"
+                    while(temporal2 != null){
+                        if(temporal2.abajo != null){
+                            let auxlib = numnodolib +1
+                            conexiones += "Nodo" + numnodo + "_" + numnodolib + "->Nodo" +numnodo + "_" +auxlib + ";\n"
                         }
                         temporal2 = temporal2.abajo
                         numnodolib++
@@ -102,9 +114,9 @@ class ListaUsuarios{
                 contador++
                 numnodo++
             }
+            direccion += "}\n"
             contador = 0
             numnodo = 0
-            numnodolib = 0
             while(contador!= this.tamanio-1){
                 let numaux = numnodo +1
                 conexiones += "\tNodo" + numnodo + "->Nodo" + numaux + ";\n"
@@ -113,7 +125,7 @@ class ListaUsuarios{
             }
             conexiones += "\tNodo" + (this.tamanio-1) + "->Nodo0;\n"
 
-            codigodot += nodos += conexiones + "}"
+            codigodot += nodos +direccion+ conexiones + "}"
             localStorage.setItem("dot_users",codigodot)
             console.log(codigodot)
         }else{
@@ -239,6 +251,7 @@ function CargaMasivaUsuarios(){
 function Login(user,password){
     let lusuarios = new ListaUsuarios()
     let usuarios = JSON.parse(localStorage.getItem("lista_usuarios"))
+    console.log(usuarios)
     for(let i = 0;i<usuarios.length;i++){
         nuevo = new Usuario(usuarios[i].dpi,usuarios[i].nombre,usuarios[i].username,usuarios[i].correo,usuarios[i].rol,usuarios[i].contrasenia,usuarios[i].telefono)
         lusuarios.insertarusuario(nuevo)
@@ -422,7 +435,7 @@ class MatrizDispersa{
         }
     }
     graficar(){
-        let codigodot = "digraph G { \nbgcolor=\"#841621\"; \ngraph [pad=\"0.5\", nodesep=\"1\", ranksep=\"1\"];\nlabel=\"Matriz Dispersa de Libros de categoria Thriller\" fontcolor=\"white\"fontname=\"Roboto Condensed\" fontsize=28;\nnode [shape=box, height=0.8];\nPrimero[style=\"filled\",fillcolor=\"black\",label = \"\", width = 1, group = 1];"
+        let codigodot = "digraph G { \nbgcolor=\"#841621\"; \ngraph [pad=\"0.5\", nodesep=\"1\", ranksep=\"1\"];\nlabel=\"Matriz Dispersa de Libros de categoria Thriller\" fontcolor=\"white\"fontname=\"Roboto Condensed\" fontsize=28;\nnode [shape=box, height=0.8];\nPrimero[style=\"filled\",fillcolor=\"black\",label = \"0\",fontcolor=\"white\", group = 0];"
         //FILAS
         let temporalfila = this.filas.primero
         let idfila = ""
@@ -432,7 +445,7 @@ class MatrizDispersa{
         while(temporalfila != null){
             let primero = true
             let actual = temporalfila.acceso
-            idfila += "\nFila" + actual.x+" [style=\"filled\",fontname=\"Roboto Condensed\",fillcolor=\"black\",fontcolor=\"white\", label = \"Repisa #" + actual.x + "\" group= 1];"
+            idfila += "\nFila" + actual.x+" [style=\"filled\",fontname=\"Roboto Condensed\",fillcolor=\"black\",fontcolor=\"white\", label = \"" + actual.x + "\" group= 0];"
             if(temporalfila.siguiente != null){
                 conexionesfilas += "\nFila" + actual.x + "->Fila" + temporalfila.siguiente.acceso.x + ";"
             }
@@ -469,7 +482,7 @@ class MatrizDispersa{
         while(temporalcolumna != null){
             let primero1 = true
             let actual = temporalcolumna.acceso
-            idcolumna+="\nColumna"+actual.y +" [style=\"filled\",fillcolor=\"black\",fontname=\"Roboto Condensed\",fontcolor=\"white\",label = \"Libros de la \\nColumna #" + actual.y + "\" group= "+actual.y+"];"
+            idcolumna+="\nColumna"+actual.y +" [style=\"filled\",fillcolor=\"black\",fontname=\"Roboto Condensed\",fontcolor=\"white\",label = \"" + actual.y + "\" group= "+actual.y+"];"
             direccion += "Columna" + actual.y + "; "
             if(temporalcolumna.siguiente != null){
                 conexionescolumnas += "\nColumna" + actual.y + " -> Columna" + temporalcolumna.siguiente.acceso.y + ";"
@@ -502,7 +515,7 @@ class MatrizDispersa{
         localStorage.setItem("dot_matrizdispersa",codigodot)
     }
     graficarlibrera(){
-        let codigodot = "digraph G { \nbgcolor=\"transparent\"; \ngraph [pad=\"0.5\", nodesep=\"1\", ranksep=\"1\"];\nnode [shape=box, height=0.8];\nPrimero[style=\"filled\",fontname=\"Roboto Condensed\",fillcolor=\"saddlebrown\",label = \"\", width = 1, group = 1];"
+        let codigodot = "digraph G { \nbgcolor=\"transparent\"; \ngraph [pad=\"0.5\", nodesep=\"1\", ranksep=\"1\"];\nnode [shape=box, height=0.8];\nPrimero[style=\"filled\",fontname=\"Roboto Condensed\",fillcolor=\"saddlebrown\",label = \"\", width = 1, group = 0];"
         //FILAS
         let temporalfila = this.filas.primero
         let idfila = ""
@@ -512,7 +525,7 @@ class MatrizDispersa{
         while(temporalfila != null){
             let primero = true
             let actual = temporalfila.acceso
-            idfila += "\nFila" + actual.x+" [style=\"filled\",fontname=\"Roboto Condensed\",fillcolor=\"saddlebrown\",fontcolor=\"white\", label = \"Repisa #" + actual.x + "\" group= 1];"
+            idfila += "\nFila" + actual.x+" [style=\"filled\",fontname=\"Roboto Condensed\",fillcolor=\"saddlebrown\",fontcolor=\"white\", label = \"Repisa #" + actual.x + "\" group= 0];"
             if(temporalfila.siguiente != null){
                 conexionesfilas += "\nFila" + actual.x + "->Fila" + temporalfila.siguiente.acceso.x + "[color=\"white\"];"
             }
@@ -626,6 +639,63 @@ class Pila{
     }
 }
 
+//-------COLA-----------
+class Pendiente{
+    constructor(_usuario,_libro, _cantidad){
+        this.usuario = _usuario
+        this.libro = _libro
+        this.cantidad = _cantidad
+    }
+}
+class NodoCola{
+    constructor(_pendiente){
+        this.pendiente = _pendiente
+        this.siguiente = null
+    }
+}
+
+class Cola{
+    constructor(){
+        this.primero = null
+        this.tamanio = 0
+    }
+    insertar(_pendiente){
+        let nuevo = new NodoCola(_pendiente)
+        if(this.primero == null){
+            this.primero = nuevo
+        }else{
+            let temp = this.primero
+            while(temp != null){
+                if(temp.siguiente == null){
+                    break
+                }
+                temp = temp.siguiente
+            }
+            temp.siguiente = nuevo
+        }
+        this.tamanio++
+    }
+    graficar(){
+        let codigodot = "digraph G{\n\trankdir=\"RL\";\n\tlabel=\" Cola de libros pendientes \";\n\tnode [shape=box];\n"
+        let temporal = this.primero
+        let conexiones = ""
+        let nodos = ""
+        let numnodo = 0
+        while(temporal!= null){
+            nodos+= "\tNodo" + numnodo + "[style=\"filled\",label=\"Cliente=" + temporal.pendiente.usuario + "\\nNombre_libro="+temporal.pendiente.libro+"\\nCantidad="+temporal.pendiente.cantidad+"\", fillcolor=\"white\"];\n"
+            if(temporal.siguiente!= null){
+                let auxnum = numnodo+1
+                conexiones+="\t\tNodo" + auxnum + "-> Nodo" + numnodo + ";\n"
+            }
+            temporal = temporal.siguiente
+            numnodo++
+        }
+        codigodot+=nodos + "\n"+conexiones + "\n}"
+        console.log(codigodot)
+        localStorage.setItem("dot_cola_libros", codigodot)
+    }
+}
+
 //-----CLASE LIBRO------
 class Libro{
     constructor(_isbn,_autor,_nombre,_cantidad,_fila,_columna,_paginas,_categoria){
@@ -698,6 +768,7 @@ function CargaLibros(){
         localStorage.setItem("matriz_libros_thriller",guardar)
     });
     reader.readAsText(archivo, "UTF-8");
+    alert("Ha cargado libros exitosamente")
 }
 function CargaAutores(){
     let input_archivo = document.getElementById("inautores");
