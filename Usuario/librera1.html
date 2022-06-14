@@ -93,12 +93,81 @@
                            </div>
                         </div>
                      </div>
+                     <div id="libreramatrizlibrosf"class="full padding_infor_info">
+                     </div>
+                     <div id="matrizlibrosf"class="full padding_infor_info">
+                     </div>
+                     <div class="full padding_infor_info">
+                        <div class="row column4 graph">
+                        <div class="col-md-6">
+                            <div class="white_shd full margin_bottom_30">
+                               <div class="full graph_head">
+                               </div>
+                                <div class="table_price full">
+                                   <div class="inner_table_price">
+                                      <div class="price_table_head"style="background-color: #841621;">
+                                         <h2>Disponibilidad del Libro</h2>
+                                      </div>
+                                      <div class="price_table_inner">
+                                         <div class="cont_table_price_blog">
+                                            <p id="nombre_l" style="color: #841621"></p>
+                                         </div>
+                                         <div id="pilac" class="cont_table_price_blog">
+                                            
+                                         </div>
+                                         <div class="cont_table_price_blog">
+                                          <h1 id="mostrarc"></h1>
+                                          </div>
+                                      </div>
+                                   </div>
+                                </div>
+                            </div>
+                         </div>
+                         <div class="col-md-6">
+                            <div class="white_shd full margin_bottom_30">
+                               <div class="full graph_head">
+                                  <div class="heading1 margin_0">
+                                     <h2>Seleccionar Libro</h2>
+                                  </div>
+                               </div>
+                               <div class="full inner_elements">
+                                 <div class="login_form">
+                                    <form>
+                                       <fieldset>
+                                          <div class="field">
+                                             <label class="label_field">Nombre:</label>
+                                             <input id="nombrelib"type="text" name="text" placeholder="Nombre del libro" />
+                                          </div>
+                                          <br>
+                                          <div class="field margin_0">
+                                             <div class="center"><button type="button" onclick="mostrarpila()"class="main_bt">Seleccionar</button></div>
+                                          </div>
+                                          <br>
+                                          <div class="field">
+                                             <label class="label_field">Cantidad:</label>
+                                             <input id="cantidad"type="number" name="number" placeholder="No. de Libros a Comprar" />
+                                          </div>
+                                          <br>
+                                          <div class="field margin_0">
+                                             <div class="center"><button type="button" onclick="comprar()" class="main_bt">Comprar</button></div>
+                                          </div>
+                                       </fieldset>
+                                    </form>
+                                 </div>
+                               </div>
+                            </div>
+                         </div>
+                        </div>
+                    </div>
                   </div>
                </div>
                <!-- end dashboard inner -->
             </div>
          </div>
       </div>
+      <script src="//d3js.org/d3.v5.min.js"></script>
+      <script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>
+      <script src="https://unpkg.com/d3-graphviz@3.0.5/build/d3-graphviz.js"></script>
       <script src="../JavaScript/main.js"></script>
       <script>
          var usuariolog = sessionStorage.getItem("usuariologueado")
@@ -108,6 +177,238 @@
             nombre.innerHTML = "Usuario @"+obj.username
          }
          mostraru()
+         function graficarmatriz(){
+            let matriz_fantasia = new MatrizOrtogonal()
+            matriz_fantasia.llenarmatriz()
+            let librosguardadosf = JSON.parse(localStorage.getItem("matriz_libros_fantasia"))
+            console.log(librosguardadosf)
+            if(librosguardadosf != null){
+               for(let i = 0;i<librosguardadosf.length;i++){
+                        let nuevo1 = new Libro(librosguardadosf[i].isbn,librosguardadosf[i].autor,librosguardadosf[i].nombre,librosguardadosf[i].cantidad,librosguardadosf[i].fila,librosguardadosf[i].columna,librosguardadosf[i].paginas,librosguardadosf[i].categoria)
+                        matriz_fantasia.insertar(parseInt(librosguardadosf[i].fila),parseInt(librosguardadosf[i].columna),nuevo1)
+               }
+            }
+            matriz_fantasia.graficarlibrera()
+            let matrizgraphviz =  localStorage.getItem("librera_matrizortogonal")
+            console.log("***************************************************")
+            console.log(matrizgraphviz)
+            d3.select("#libreramatrizlibrosf").graphviz()
+               .width(1500)
+               .height(1500)
+               .renderDot(matrizgraphviz) 
+            matriz_fantasia.graficar()
+            let matrizgraphviz2 =  localStorage.getItem("dot_matrizortogonal")
+            d3.select("#matrizlibrosf").graphviz()
+               .width(1500)
+               .height(1500)
+               .renderDot(matrizgraphviz2) 
+         }
+         graficarmatriz()
+
+         function mostrarpila(){
+            let matriz_fantasia = new MatrizOrtogonal()
+            let pila = new Pila()
+            let lugarnombre = document.getElementById("nombre_l")
+            let mc = document.getElementById("mostrarc")
+            matriz_fantasia.llenarmatriz()
+            let librosguardadosf = JSON.parse(localStorage.getItem("matriz_libros_fantasia"))
+            console.log(librosguardadosf)
+            if(librosguardadosf != null){
+               for(let i = 0;i<librosguardadosf.length;i++){
+                        let nuevo1 = new Libro(librosguardadosf[i].isbn,librosguardadosf[i].autor,librosguardadosf[i].nombre,librosguardadosf[i].cantidad,librosguardadosf[i].fila,librosguardadosf[i].columna,librosguardadosf[i].paginas,librosguardadosf[i].categoria)
+                        matriz_fantasia.insertar(parseInt(librosguardadosf[i].fila),parseInt(librosguardadosf[i].columna),nuevo1)
+               }
+            }
+            let nombre = document.getElementById("nombrelib").value
+            console.log(nombre)
+            let libro = matriz_fantasia.retornarlibro(nombre)
+            if(libro == null){
+               alert("Ingrese el nombre de un libro que se encuentre disponible")
+            }else{
+               let cantidad = libro.cantidad
+               lugarnombre.innerHTML = libro.nombre
+               if(cantidad == 0){
+                  d3.select("#pilac").graphviz()
+                     .width(500)
+                     .height(500)
+                     .renderDot("digraph Pila{\n}") 
+                  mc.innerHTML= "Cantidad: " + libro.cantidad
+               }else{
+                  for(let i= 0; i<cantidad; i ++){
+                     pila.insertar(i)
+                  }
+                  pila.graficar()
+                  let pilag = localStorage.getItem("pila_cantidad")
+                  d3.select("#pilac").graphviz()
+                     .width(500)
+                     .height(500)
+                     .renderDot(pilag) 
+                  mc.innerHTML= "Cantidad: " + libro.cantidad
+               }
+            }
+         }
+
+         function comprar(){
+            let matriz_fantasia = new MatrizOrtogonal()
+            matriz_fantasia.llenarmatriz()
+            let librosguardadosf = JSON.parse(localStorage.getItem("matriz_libros_fantasia"))
+            console.log(librosguardadosf)
+            if(librosguardadosf != null){
+               for(let i = 0;i<librosguardadosf.length;i++){
+                        let nuevo1 = new Libro(librosguardadosf[i].isbn,librosguardadosf[i].autor,librosguardadosf[i].nombre,librosguardadosf[i].cantidad,librosguardadosf[i].fila,librosguardadosf[i].columna,librosguardadosf[i].paginas,librosguardadosf[i].categoria)
+                        matriz_fantasia.insertar(parseInt(librosguardadosf[i].fila),parseInt(librosguardadosf[i].columna),nuevo1)
+               }
+            }
+            let cantidadcliente = document.getElementById("cantidad").value
+            let nombre = document.getElementById("nombrelib").value
+            let libro = matriz_fantasia.retornarlibro(nombre)
+            if(libro == null){
+               alert("Ingrese el nombre de un libro que se encuentre disponible")
+            }else{
+               if((cantidadcliente == "" && fila== "" && columna == "")||(cantidadcliente == "" && fila!= "" && columna != "")){
+                  alert("Ingrese la cantidad de libros que quiere comprar")
+               }else if(cantidadcliente>=0){
+                  let clibro = libro.cantidad
+                  let ccliente = cantidadcliente
+                  let restante = clibro - ccliente
+                  let usersguardados =  JSON.parse(localStorage.getItem("lista_usuarios"))
+                  let lusers = new ListaUsuarios()
+                  for(let i = 0; i<usersguardados.length; i++){
+                     let cargau = new Usuario(usersguardados[i].dpi,usersguardados[i].nombre,usersguardados[i].username,usersguardados[i].correo,usersguardados[i].rol,usersguardados[i].contrasenia,usersguardados[i].telefono)
+                     lusers.insertarusuario(cargau)
+                     let libus = localStorage.getItem("libros_"+usersguardados[i].username)
+                     if (libus != null){
+                        if(libus != "[]"){
+                           let l = libus.replace("[","")
+                           l = l.replace("]","")
+                           let li = l.split(",")
+                           console.log("-------"+li)
+                           for(let j = 0; j<li.length; j++){
+                              lusers.insertarlibro(li[j],usersguardados[i].dpi)
+                           }
+                        }
+                     }
+                  }
+                  let obj = JSON.parse(usuariolog)
+                  if(restante>=0){
+                     //ACTUALIZAR LA CANTIDAD DE LIBROS EN EL LIBRO 
+                     libro.cantidad = restante
+                     let guardar = "["
+                     for(let i = 0; i<=25; i++){
+                        for(let j = 0; j<=25; j++){
+                           let lib = matriz_fantasia.retornarnodolibro(i,j)
+                           if(lib != null){
+                              guardar+= JSON.stringify(lib) + ","
+                           }
+                        }
+                     }
+                     const guardar2 = guardar.substring(0,guardar.length-1)
+                     guardar = guardar2 +"]"
+                     localStorage.setItem("matriz_libros_fantasia",guardar)
+                     let contador = 0
+                     //Inserta los libros comprados al usuario
+                     while(contador!=ccliente){
+                        lusers.insertarlibro(libro.nombre,obj.dpi)
+                        contador++
+                     }
+                     console.log(lusers)
+                     contador =0
+                     let temporal = lusers.primero
+                     while(contador != lusers.tamanio){
+                        let librosus = "["
+                        let temp2 = temporal.abajo
+                        while(temp2 != null){  
+                           if(temp2.abajo != null){
+                              librosus+= temp2.nombre + ","
+                              temp2 = temp2.abajo
+                           }else{
+                              librosus+= temp2.nombre
+                              temp2 = temp2.abajo
+                           }
+                        }
+                        librosus+="]"
+                        localStorage.setItem("libros_" + temporal.usuario.username,librosus)
+                        temporal = temporal.siguiente
+                        contador++
+                     }
+                     alert("Se compró con éxito " + ccliente + " libros de " + libro.nombre)
+                  }else{
+                     let contador = 0
+                     //Inserta los libros comprados al usuario
+                     while(contador!=libro.cantidad){
+                        lusers.insertarlibro(libro.nombre,obj.dpi)
+                        contador++
+                     }
+                     console.log(lusers)
+                     let cananterior = libro.cantidad
+                     libro.cantidad = 0
+                     //PROCESO DE AÑADIRLO A LA LISTA DE LISTAS
+                     let guardar = "["
+                     for(let i = 0; i<=25; i++){
+                        for(let j = 0; j<=25; j++){
+                           let lib = matriz_fantasia.retornarnodolibro(i,j)
+                           if(lib != null){
+                              guardar+= JSON.stringify(lib) + ","
+                           }
+                        }
+                     }
+                     const guardar2 = guardar.substring(0,guardar.length-1)
+                     guardar = guardar2 +"]"
+                     localStorage.setItem("matriz_libros_fantasia",guardar)
+                     contador =0
+                     let temporal = lusers.primero
+                     while(contador != lusers.tamanio){
+                        let librosus = "["
+                        let temp2 = temporal.abajo
+                        while(temp2 != null){  
+                           if(temp2.abajo != null){
+                              librosus+= temp2.nombre + ","
+                              temp2 = temp2.abajo
+                           }else{
+                              librosus+= temp2.nombre
+                              temp2 = temp2.abajo
+                           }
+                        }
+                        librosus+="]"
+                        localStorage.setItem("libros_" + temporal.usuario.username,librosus)
+                        temporal = temporal.siguiente
+                        contador++
+                     }
+
+                     //PROCESO DE AÑADIRLO A LA COLA
+                     let librosnegativos = restante*-1
+                     let cola = new Cola()
+                     let colaguardada = localStorage.getItem("cola_libros")
+                     if(colaguardada != null){
+                        let colajs = JSON.parse(colaguardada) 
+                        for(let i = 0;i<colajs.length;i++){
+                           let penviejo = new Pendiente(colajs[i].usuario,colajs[i].libro,colajs[i].cantidad) 
+                           cola.insertar(penviejo)
+                        }
+                     }
+                     let pennuevo = new Pendiente(obj.username,libro.nombre,librosnegativos)
+                     cola.insertar(pennuevo)
+                     let tempo = cola.primero
+                     let txt = "["
+                     while(tempo != null){
+                        if(tempo.siguiente == null){
+                           txt+=JSON.stringify(tempo.pendiente)+"]"
+                           tempo = tempo.siguiente
+                        }else{
+                           txt+=JSON.stringify(tempo.pendiente) + ","
+                           tempo = tempo.siguiente
+                        }
+                     }
+                     console.log("COLA DE LIBROS")
+                     console.log(txt)
+                     localStorage.setItem("cola_libros",txt)
+                     alert("Se añadieron " + cananterior +" libros en tu compra\nPróximamente se te enviara la cantidad de " + librosnegativos + " libros a tu biblioteca virtual")
+                  }
+               }else{
+                  alert("Ingrese la cantidad valida de libros que quiere comprar")
+               }
+            }
+         }
       </script>
       <!-- jQuery -->
       <script src="js/jquery.min.js"></script>

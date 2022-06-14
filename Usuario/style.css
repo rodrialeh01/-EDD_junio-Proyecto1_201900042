@@ -1772,6 +1772,10 @@ button.main_bt {
     color: #fff;
 }
 
+#libreramatrizlibrosf{
+    background-image: url(./librerafondo.jpg);
+}
+
 .task_list li a {
     color: #99abb4;
     font-size: 16px;

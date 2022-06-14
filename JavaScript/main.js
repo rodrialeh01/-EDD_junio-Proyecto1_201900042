@@ -555,6 +555,7 @@ class MatrizDispersa{
             return null
         }
     }
+
     graficar(){
         let codigodot = "digraph G { \nbgcolor=\"#841621\"; \ngraph [pad=\"0.5\", nodesep=\"1\", ranksep=\"1\"];\nlabel=\"Matriz Dispersa de Libros de categoria Thriller\" fontcolor=\"white\"fontname=\"Roboto Condensed\" fontsize=28;\nnode [shape=box, height=0.8];\nPrimero[style=\"filled\",fillcolor=\"black\",label = \"0\",fontcolor=\"white\", group = 0];"
         //FILAS
@@ -717,6 +718,252 @@ class MatrizDispersa{
     }
 }
 
+//--------------MATRIZ ORTOGONAL------------------
+class NodoCO{
+    constructor(_libro,_x,_y){
+        this.libro = _libro
+        this.x = _x
+        this.y = _y
+        this.abajo = null
+        this.siguiente = null
+    }
+}
+
+class ListaMO{
+    constructor(){
+        this.raiz = null
+        this.ultimo = null
+    }
+    insertarlista(_libro,_x){
+        let nuevo = new NodoCO(_libro,_x,0)
+        if(this.raiz == null){
+            this.raiz = nuevo
+            this.ultimo = nuevo
+        }else{
+            this.ultimo.siguiente = nuevo
+            this.ultimo = nuevo
+        }
+
+        let temporal = this.ultimo
+        for(let cy = 24; cy>= 0; cy--){
+            let nuevon = new NodoCO(_libro,_x,cy)
+            let aux = this.ultimo.abajo
+            temporal.abajo = nuevon
+            nuevon.abajo = aux
+        }
+    }
+
+    retornarlista(_x){
+        let temporal = this.raiz
+        while(temporal != null){
+            if(temporal.x == _x){
+                return temporal
+            }
+            temporal = temporal.siguiente
+        }
+        return null
+    }
+}
+
+class MatrizOrtogonal{
+    constructor(){
+        this.lista_x = new ListaMO()
+    }
+
+    llenarmatriz(){
+        for(let i = 0; i < 25; i++){
+            this.lista_x.insertarlista(null,i)
+        }
+    }
+    
+    insertar(_coorx,_coory,_libro){
+        let list_x = this.lista_x.retornarlista(_coorx)
+        let list_y = list_x.abajo
+        while(list_y != null){
+            if(list_y.y == _coory){
+                list_y.libro = _libro
+                break
+            }
+            list_y = list_y.abajo
+        }
+    }
+
+    retornarlibro(_nombre){
+        let contx = 0
+        while(contx != 25){
+            let list_x = this.lista_x.retornarlista(contx)
+            let tempo = list_x.abajo
+            while(tempo != null){
+                if(tempo.libro != null){
+                    if(tempo.libro.nombre == _nombre){
+                        return tempo.libro
+                    }
+                }
+                tempo = tempo.abajo
+            }
+            contx++
+        }
+        return null
+    }
+
+    retornarnodolibro(_x,_y){
+        let contx = 0
+        while(contx != 25){
+            if(contx == _x){
+                let list_x = this.lista_x.retornarlista(contx)
+                let tempo = list_x.abajo
+                while(tempo != null){
+                    if(tempo.y == _y){
+                        return tempo.libro
+                    }
+                    tempo = tempo.abajo
+                }
+            }
+            contx++
+        }
+        return null
+    }
+
+    graficar(){
+        if(this.tamanio!= 0){
+            let contx = 0
+            let temporalx = this.lista_x.retornarlista(contx)
+            let codigodot = "digraph G {\nbgcolor=\"#841621\";\ngraph [pad=\"0.3\", nodesep=\"0.6\", ranksep=\"0.6\"];\nnode [shape=box];\nlabel=\"Matriz Ortogonal de libros de categoria Fantasia\"fontcolor=\"white\"fontname=\"Roboto Condensed\" fontsize=58;\nedge[dir=\"both\" color=\"white\"]\n"
+            let nodos = ""
+            let conexiones = ""
+            let numnodo = 0
+            let direccion = ""
+            while(temporalx!= null){
+                let numnodolib = 1
+                let temporaly = temporalx.abajo
+                if(temporaly.abajo != null){
+                    while(temporaly != null){
+                        if(temporaly.libro != null){
+                            nodos +="Nodo" + numnodo+"_"+numnodolib + "[style=\"filled\",fillcolor=\"black\",fontname=\"Roboto Condensed\",fontcolor=\"white\",label=\"" + temporaly.libro.nombre +"\" group="+temporaly.y+"];\n"
+                            temporaly = temporaly.abajo
+                            numnodolib++
+                        }else{
+                            nodos +="Nodo" + numnodo+"_"+numnodolib + "[style=\"filled\",fillcolor=\"black\",fontname=\"Roboto Condensed\",fontcolor=\"white\",label=\" \" group="+temporaly.y+"];\n"
+                            temporaly = temporaly.abajo
+                            numnodolib++
+                        }
+                    }
+                    temporaly = temporalx.abajo
+                    numnodolib = 1
+                    while(temporaly != null){
+                        if(temporaly.abajo != null){
+                            let auxlib = numnodolib +1
+                            conexiones += "Nodo" + numnodo + "_" + numnodolib + "->Nodo" +numnodo + "_" +auxlib + ";\n"
+                        }
+                        temporaly = temporaly.abajo
+                        numnodolib++
+                    }
+                    numnodolib = 1
+                }
+                temporalx = temporalx.siguiente
+                contx++
+                numnodo++
+            }
+            let coy = 1
+            while(coy != 26){
+                let cox = 0
+                while(cox != 24){
+                    let aux = cox+1
+                    if(aux != 25){
+                        conexiones += "Nodo" + cox + "_" + coy + "->Nodo" +aux + "_" +coy + ";\n"
+                    }
+                    cox++
+                }
+                coy++
+            }
+
+            let cy = 1
+            while(cy != 26){
+                let cx = 0
+                direccion+="\n{rank= same; "
+                while(cx!=25){
+                    direccion+= "Nodo"+ cx + "_"+cy+"; "
+                    cx++
+                }
+                direccion +="}\n"
+                cy++
+            }
+            codigodot += nodos +direccion+ conexiones + "}"
+            localStorage.setItem("dot_matrizortogonal",codigodot)
+            console.log(codigodot)
+        }    
+    }
+    graficarlibrera(){
+        if(this.tamanio!= 0){
+            let contx = 0
+            let temporalx = this.lista_x.retornarlista(contx)
+            let codigodot = "digraph G {\nbgcolor=\"transparent\";\ngraph [pad=\"0.3\", nodesep=\"0.6\", ranksep=\"0.6\"];\nnode [shape=box];\nedge[dir=\"both\" color=\"white\"]\n"
+            let nodos = ""
+            let conexiones = ""
+            let numnodo = 0
+            let direccion = ""
+            while(temporalx!= null){
+                let numnodolib = 1
+                let temporaly = temporalx.abajo
+                if(temporaly.abajo != null){
+                    while(temporaly != null){
+                        if(temporaly.libro != null){
+                            nodos +="Nodo" + numnodo+"_"+numnodolib + "[style=\"filled\",fontname=\"Roboto Condensed\",fillcolor=\"lightsalmon\",label=\"" + temporaly.libro.nombre +"\" group="+temporaly.y+"];\n"
+                            temporaly = temporaly.abajo
+                            numnodolib++
+                        }else{
+                            nodos +="Nodo" + numnodo+"_"+numnodolib + "[style=\"filled\",fontname=\"Roboto Condensed\",fillcolor=\"lightsalmon\",label=\" \" group="+temporaly.y+"];\n"
+                            temporaly = temporaly.abajo
+                            numnodolib++
+                        }
+                    }
+                    temporaly = temporalx.abajo
+                    numnodolib = 1
+                    while(temporaly != null){
+                        if(temporaly.abajo != null){
+                            let auxlib = numnodolib +1
+                            conexiones += "Nodo" + numnodo + "_" + numnodolib + "->Nodo" +numnodo + "_" +auxlib + ";\n"
+                        }
+                        temporaly = temporaly.abajo
+                        numnodolib++
+                    }
+                    numnodolib = 1
+                }
+                temporalx = temporalx.siguiente
+                contx++
+                numnodo++
+            }
+            let coy = 1
+            while(coy != 26){
+                let cox = 0
+                while(cox != 24){
+                    let aux = cox+1
+                    if(aux != 25){
+                        conexiones += "Nodo" + cox + "_" + coy + "->Nodo" +aux + "_" +coy + ";\n"
+                    }
+                    cox++
+                }
+                coy++
+            }
+
+            let cy = 1
+            while(cy != 26){
+                let cx = 0
+                direccion+="\n{rank= same; "
+                while(cx!=25){
+                    direccion+= "Nodo"+ cx + "_"+cy+"; "
+                    cx++
+                }
+                direccion +="}\n"
+                cy++
+            }
+            codigodot += nodos +direccion+ conexiones + "}"
+            localStorage.setItem("librera_matrizortogonal",codigodot)
+            console.log(codigodot)
+        }    
+    }
+}
+
 //--------------PILA------------------
 class NodoPila{
     constructor(_numero){
@@ -833,7 +1080,8 @@ class Libro{
 //CARGA MASIVA DE LIBROS
 function CargaLibros(){
     let matriz_thriller = new MatrizDispersa()
-    //let matriz_fantasia = new MatrizOrtogonal()
+    let matriz_fantasia = new MatrizOrtogonal()
+    matriz_fantasia.llenarmatriz()
     let input_archivo = document.getElementById("inlibros");
     let archivo = input_archivo.files[0];
     let librosguardadost = JSON.parse(localStorage.getItem("matriz_libros_thriller"))
@@ -847,7 +1095,7 @@ function CargaLibros(){
     if(librosguardadosf != null){
         for(let i = 0;i<librosguardadosf.length;i++){
             let nuevo2 = new Libro(librosguardadosf[i].isbn,librosguardadosf[i].autor,librosguardadosf[i].nombre,librosguardadosf[i].cantidad,librosguardadosf[i].fila,librosguardadosf[i].columna,librosguardadosf[i].paginas,librosguardadosf[i].categoria)
-            
+            matriz_fantasia.insertar(parseInt(librosguardadost[i].fila),parseInt(librosguardadost[i].columna),nuevo2)
         }
     }
     if (!archivo) {
@@ -871,7 +1119,9 @@ function CargaLibros(){
                 console.log(nuevo3)
                 matriz_thriller.insertar(parseInt(fila),parseInt(columna),nuevo3)
             }else if(categoria == "Fantasia"){
-                
+                let nuevo4 = new Libro(isbn,autor,nombre,cantidad,fila,columna,paginas,categoria)
+                console.log(nuevo4)
+                matriz_fantasia.insertar(parseInt(fila),parseInt(columna),nuevo4)
             }
         }
         let guardar = "["
@@ -887,6 +1137,20 @@ function CargaLibros(){
         guardar = guardar2 +"]"
         console.log(guardar)
         localStorage.setItem("matriz_libros_thriller",guardar)
+
+        guardar = "["
+        for(let i = 0; i<=25; i++){
+            for(let j = 0; j<=25; j++){
+                let nodolib = matriz_fantasia.retornarnodolibro(i,j)
+                if(nodolib != null){
+                    guardar+= JSON.stringify(nodolib) + ","
+                }
+            }
+        }
+        const guardar3 = guardar.substring(0,guardar.length-1)
+        guardar = guardar3 +"]"
+        console.log(guardar)
+        localStorage.setItem("matriz_libros_fantasia",guardar)
     });
     reader.readAsText(archivo, "UTF-8");
     alert("Ha cargado libros exitosamente")

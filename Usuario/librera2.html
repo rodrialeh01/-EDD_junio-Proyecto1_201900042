@@ -206,7 +206,7 @@
                .width(1500)
                .height(950)
                .renderDot(matrizgraphviz2) 
-            }
+         }
          graficarmatriz()
          function mostrarpila(){
             let matriz_thriller = new MatrizDispersa()
@@ -348,6 +348,7 @@
                         contador++
                      }
                      console.log(lusers)
+                     let cananterior = nodo.libro.cantidad
                      nodo.libro.cantidad = 0
                      //PROCESO DE AÑADIRLO A LA LISTA DE LISTAS
                      let guardar = "["
@@ -409,7 +410,7 @@
                      console.log("COLA DE LIBROS")
                      console.log(txt)
                      localStorage.setItem("cola_libros",txt)
-                     alert("Se añadieron " + nodo.libro.cantidad +" libros en tu compra\nPróximamente se te enviara la cantidad de " + librosnegativos + " libros a tu biblioteca virtual")
+                     alert("Se añadieron " + cananterior +" libros en tu compra\nPróximamente se te enviara la cantidad de " + librosnegativos + " libros a tu biblioteca virtual")
                   }
                }else{
                   alert("Ingrese la cantidad valida de libros que quiere comprar")
