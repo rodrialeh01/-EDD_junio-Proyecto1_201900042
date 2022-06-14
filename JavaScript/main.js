@@ -1064,6 +1064,31 @@ class Cola{
     }
 }
 
+//-----------LISTA SIMPLE----------------
+class NodoLib{
+    constructor(_libro){
+        this.libro = _libro
+        this.siguiente = null
+    }
+}
+
+class ListaSimple{
+    constructor(){
+        this.cabeza = null
+    }
+    insertar(_libro){
+        let nuevo = new NodoLib(_libro)
+        nuevo.siguiente = this.cabeza
+        this.cabeza = nuevo
+    }
+    ordenamientoascendente(){
+
+    }
+    ordenamientodescendente(){
+        
+    }
+}
+
 //-----CLASE LIBRO------
 class Libro{
     constructor(_isbn,_autor,_nombre,_cantidad,_fila,_columna,_paginas,_categoria){
