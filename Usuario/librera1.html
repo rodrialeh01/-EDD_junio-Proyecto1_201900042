@@ -294,8 +294,8 @@
                      //ACTUALIZAR LA CANTIDAD DE LIBROS EN EL LIBRO 
                      libro.cantidad = restante
                      let guardar = "["
-                     for(let i = 0; i<=25; i++){
-                        for(let j = 0; j<=25; j++){
+                     for(let i = 1; i<=25; i++){
+                        for(let j = 1; j<=25; j++){
                            let lib = matriz_fantasia.retornarnodolibro(i,j)
                            if(lib != null){
                               guardar+= JSON.stringify(lib) + ","
@@ -344,8 +344,8 @@
                      libro.cantidad = 0
                      //PROCESO DE AÑADIRLO A LA LISTA DE LISTAS
                      let guardar = "["
-                     for(let i = 0; i<=25; i++){
-                        for(let j = 0; j<=25; j++){
+                     for(let i = 1; i<=25; i++){
+                        for(let j = 1; j<=25; j++){
                            let lib = matriz_fantasia.retornarnodolibro(i,j)
                            if(lib != null){
                               guardar+= JSON.stringify(lib) + ","

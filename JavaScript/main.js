@@ -745,7 +745,7 @@ class ListaMO{
         }
 
         let temporal = this.ultimo
-        for(let cy = 24; cy>= 0; cy--){
+        for(let cy = 25; cy>= 1; cy--){
             let nuevon = new NodoCO(_libro,_x,cy)
             let aux = this.ultimo.abajo
             temporal.abajo = nuevon
@@ -771,7 +771,7 @@ class MatrizOrtogonal{
     }
 
     llenarmatriz(){
-        for(let i = 0; i < 25; i++){
+        for(let i = 1; i < 26; i++){
             this.lista_x.insertarlista(null,i)
         }
     }
@@ -789,8 +789,8 @@ class MatrizOrtogonal{
     }
 
     retornarlibro(_nombre){
-        let contx = 0
-        while(contx != 25){
+        let contx = 1
+        while(contx != 26){
             let list_x = this.lista_x.retornarlista(contx)
             let tempo = list_x.abajo
             while(tempo != null){
@@ -807,8 +807,8 @@ class MatrizOrtogonal{
     }
 
     retornarnodolibro(_x,_y){
-        let contx = 0
-        while(contx != 25){
+        let contx = 1
+        while(contx != 26){
             if(contx == _x){
                 let list_x = this.lista_x.retornarlista(contx)
                 let tempo = list_x.abajo
@@ -826,39 +826,36 @@ class MatrizOrtogonal{
 
     graficar(){
         if(this.tamanio!= 0){
-            let contx = 0
+            let contx = 1
             let temporalx = this.lista_x.retornarlista(contx)
             let codigodot = "digraph G {\nbgcolor=\"#841621\";\ngraph [pad=\"0.3\", nodesep=\"0.6\", ranksep=\"0.6\"];\nnode [shape=box];\nlabel=\"Matriz Ortogonal de libros de categoria Fantasia\"fontcolor=\"white\"fontname=\"Roboto Condensed\" fontsize=58;\nedge[dir=\"both\" color=\"white\"]\n"
             let nodos = ""
             let conexiones = ""
-            let numnodo = 0
+            let numnodo = 1
             let direccion = ""
             while(temporalx!= null){
                 let numnodolib = 1
                 let temporaly = temporalx.abajo
-                if(temporaly.abajo != null){
-                    while(temporaly != null){
-                        if(temporaly.libro != null){
-                            nodos +="Nodo" + numnodo+"_"+numnodolib + "[style=\"filled\",fillcolor=\"black\",fontname=\"Roboto Condensed\",fontcolor=\"white\",label=\"" + temporaly.libro.nombre +"\" group="+temporaly.y+"];\n"
-                            temporaly = temporaly.abajo
-                            numnodolib++
-                        }else{
-                            nodos +="Nodo" + numnodo+"_"+numnodolib + "[style=\"filled\",fillcolor=\"black\",fontname=\"Roboto Condensed\",fontcolor=\"white\",label=\" \" group="+temporaly.y+"];\n"
-                            temporaly = temporaly.abajo
-                            numnodolib++
-                        }
-                    }
-                    temporaly = temporalx.abajo
-                    numnodolib = 1
-                    while(temporaly != null){
-                        if(temporaly.abajo != null){
-                            let auxlib = numnodolib +1
-                            conexiones += "Nodo" + numnodo + "_" + numnodolib + "->Nodo" +numnodo + "_" +auxlib + ";\n"
-                        }
+                while(temporaly != null){
+                    if(temporaly.libro != null){
+                        nodos +="Nodo" + numnodo+"_"+numnodolib + "[style=\"filled\",fillcolor=\"black\",fontname=\"Roboto Condensed\",fontcolor=\"white\",label=\"" + temporaly.libro.nombre + "\\n(" + temporaly.libro.fila +"," + temporaly.libro.columna +")\" group="+temporaly.y+"];\n"
+                        temporaly = temporaly.abajo
+                        numnodolib++
+                    }else{
+                        nodos +="Nodo" + numnodo+"_"+numnodolib + "[style=\"filled\",fillcolor=\"black\",fontname=\"Roboto Condensed\",fontcolor=\"white\",label=\" \" group="+temporaly.y+"];\n"
                         temporaly = temporaly.abajo
                         numnodolib++
                     }
-                    numnodolib = 1
+                }
+                temporaly = temporalx.abajo
+                let numnodolib2 = 1
+                while(temporaly != null){
+                    if(temporaly.abajo != null){
+                        let auxlib = numnodolib2 +1
+                        conexiones += "Nodo" + numnodo + "_" + numnodolib2 + "->Nodo" +numnodo + "_" +auxlib + ";\n"
+                    }
+                    temporaly = temporaly.abajo
+                    numnodolib2++
                 }
                 temporalx = temporalx.siguiente
                 contx++
@@ -866,10 +863,10 @@ class MatrizOrtogonal{
             }
             let coy = 1
             while(coy != 26){
-                let cox = 0
-                while(cox != 24){
+                let cox = 1
+                while(cox != 25){
                     let aux = cox+1
-                    if(aux != 25){
+                    if(aux != 26){
                         conexiones += "Nodo" + cox + "_" + coy + "->Nodo" +aux + "_" +coy + ";\n"
                     }
                     cox++
@@ -879,9 +876,9 @@ class MatrizOrtogonal{
 
             let cy = 1
             while(cy != 26){
-                let cx = 0
+                let cx = 1
                 direccion+="\n{rank= same; "
-                while(cx!=25){
+                while(cx!=26){
                     direccion+= "Nodo"+ cx + "_"+cy+"; "
                     cx++
                 }
@@ -895,12 +892,12 @@ class MatrizOrtogonal{
     }
     graficarlibrera(){
         if(this.tamanio!= 0){
-            let contx = 0
+            let contx = 1
             let temporalx = this.lista_x.retornarlista(contx)
             let codigodot = "digraph G {\nbgcolor=\"transparent\";\ngraph [pad=\"0.3\", nodesep=\"0.6\", ranksep=\"0.6\"];\nnode [shape=box];\nedge[dir=\"both\" color=\"white\"]\n"
             let nodos = ""
             let conexiones = ""
-            let numnodo = 0
+            let numnodo = 1
             let direccion = ""
             while(temporalx!= null){
                 let numnodolib = 1
@@ -908,7 +905,7 @@ class MatrizOrtogonal{
                 if(temporaly.abajo != null){
                     while(temporaly != null){
                         if(temporaly.libro != null){
-                            nodos +="Nodo" + numnodo+"_"+numnodolib + "[style=\"filled\",fontname=\"Roboto Condensed\",fillcolor=\"lightsalmon\",label=\"" + temporaly.libro.nombre +"\" group="+temporaly.y+"];\n"
+                            nodos +="Nodo" + numnodo+"_"+numnodolib + "[style=\"filled\",fontname=\"Roboto Condensed\",fillcolor=\"lightsalmon\",label=\"" + temporaly.libro.nombre + "\\n(" + temporaly.libro.fila +"," + temporaly.libro.columna +")\" group="+temporaly.y+"];\n"
                             temporaly = temporaly.abajo
                             numnodolib++
                         }else{
@@ -935,10 +932,10 @@ class MatrizOrtogonal{
             }
             let coy = 1
             while(coy != 26){
-                let cox = 0
-                while(cox != 24){
+                let cox = 1
+                while(cox != 25){
                     let aux = cox+1
-                    if(aux != 25){
+                    if(aux != 26){
                         conexiones += "Nodo" + cox + "_" + coy + "->Nodo" +aux + "_" +coy + ";\n"
                     }
                     cox++
@@ -948,9 +945,9 @@ class MatrizOrtogonal{
 
             let cy = 1
             while(cy != 26){
-                let cx = 0
+                let cx = 1
                 direccion+="\n{rank= same; "
-                while(cx!=25){
+                while(cx!=26){
                     direccion+= "Nodo"+ cx + "_"+cy+"; "
                     cx++
                 }
@@ -1085,7 +1082,7 @@ class ListaSimple{
 
     }
     ordenamientodescendente(){
-        
+
     }
 }
 
