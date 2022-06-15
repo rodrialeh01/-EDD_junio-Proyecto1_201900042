@@ -579,12 +579,10 @@ class MatrizDispersa{
                     nodosinteriores += "\nFila"+actual.x + "-> NodoF" + actual.x + "_C" + actual.y + ";"
                     if(actual.derecha!= null){
                         nodosinteriores += "\nNodoF" + actual.x + "_C" + actual.y + "-> NodoF" + actual.derecha.x + "_C" + actual.derecha.y + ";"
-                        nodosinteriores += "\nNodoF" + actual.derecha.x + "_C" + actual.derecha.y + "-> NodoF" + actual.x + "_C" + actual.y + ";"
                         primero = false
                     }else{
                         if(actual.derecha != null){
                             nodosinteriores += "\nNodoF" + actual.x + "_C" + actual.y + "-> NodoF" + actual.derecha.x + "_C" + actual.derecha.y + ";"
-                            nodosinteriores += "\nNodoF" + actual.derecha.x + "_C" + actual.derecha.y + "-> NodoF" + actual.x + "_C" + actual.y + ";"
                         }
                     }
                 }
@@ -614,13 +612,11 @@ class MatrizDispersa{
                     codigodot+="\nColumna"+ actual.y + " -> NodoF" + actual.x + "_C" + actual.y + ";"
                     if(actual.abajo != null){
                         codigodot+="\nNodoF" + actual.x + "_C" + actual.y + " -> NodoF"+ actual.abajo.x + "_C" + actual.abajo.y + ";"
-                        codigodot+="\nNodoF" + actual.abajo.x + "_C" + actual.abajo.y + " -> NodoF"+ actual.x + "_C" + actual.y + ";"
                     }
                     primero1 = false
                 }else{
                     if(actual.abajo != null){
                         codigodot+="\nNodoF" + actual.x + "_C" + actual.y + " -> NodoF"+ actual.abajo.x + "_C" + actual.abajo.y + ";"
-                        codigodot+="\nNodoF" + actual.abajo.x + "_C" + actual.abajo.y + " -> NodoF"+ actual.x + "_C" + actual.y + ";"
                     }
                 }
                 actual = actual.abajo
@@ -659,12 +655,10 @@ class MatrizDispersa{
                     nodosinteriores += "\nFila"+actual.x + "-> NodoF" + actual.x + "_C" + actual.y + "[color=\"white\"];"
                     if(actual.derecha!= null){
                         nodosinteriores += "\nNodoF" + actual.x + "_C" + actual.y + "-> NodoF" + actual.derecha.x + "_C" + actual.derecha.y + "[color=\"white\"];"
-                        nodosinteriores += "\nNodoF" + actual.derecha.x + "_C" + actual.derecha.y + "-> NodoF" + actual.x + "_C" + actual.y + "[color=\"white\"];"
                         primero = false
                     }else{
                         if(actual.derecha != null){
                             nodosinteriores += "\nNodoF" + actual.x + "_C" + actual.y + "-> NodoF" + actual.derecha.x + "_C" + actual.derecha.y + "[color=\"white\"];"
-                            nodosinteriores += "\nNodoF" + actual.derecha.x + "_C" + actual.derecha.y + "-> NodoF" + actual.x + "_C" + actual.y + "[color=\"white\"];"
                         }
                     }
                 }
@@ -694,13 +688,11 @@ class MatrizDispersa{
                     codigodot+="\nColumna"+ actual.y + " -> NodoF" + actual.x + "_C" + actual.y + "[color=\"white\"];"
                     if(actual.abajo != null){
                         codigodot+="\nNodoF" + actual.x + "_C" + actual.y + " -> NodoF"+ actual.abajo.x + "_C" + actual.abajo.y + "[color=\"white\"];"
-                        codigodot+="\nNodoF" + actual.abajo.x + "_C" + actual.abajo.y + " -> NodoF"+ actual.x + "_C" + actual.y + "[color=\"white\"];"
                     }
                     primero1 = false
                 }else{
                     if(actual.abajo != null){
                         codigodot+="\nNodoF" + actual.x + "_C" + actual.y + " -> NodoF"+ actual.abajo.x + "_C" + actual.abajo.y + "[color=\"white\"];"
-                        codigodot+="\nNodoF" + actual.abajo.x + "_C" + actual.abajo.y + " -> NodoF"+ actual.x + "_C" + actual.y + "[color=\"white\"];"
                     }
                 }
                 actual = actual.abajo
@@ -879,7 +871,7 @@ class MatrizOrtogonal{
                 let cx = 1
                 direccion+="\n{rank= same; "
                 while(cx!=26){
-                    direccion+= "Nodo"+ cx + "_"+cy+"; "
+                    direccion+= "Nodo"+ cy + "_"+cx+"; "
                     cx++
                 }
                 direccion +="}\n"
@@ -948,7 +940,7 @@ class MatrizOrtogonal{
                 let cx = 1
                 direccion+="\n{rank= same; "
                 while(cx!=26){
-                    direccion+= "Nodo"+ cx + "_"+cy+"; "
+                    direccion+= "Nodo"+ cy + "_"+cx+"; "
                     cx++
                 }
                 direccion +="}\n"
