@@ -2018,7 +2018,7 @@ button.main_bt {
 
 .info_people .user_info_cont p.p_status {
     font-weight: 600;
-    color: #ff5722;
+    color: #841621;
     margin-top: 10px;
 }
 
@@ -3080,17 +3080,18 @@ ul.labels-category li p {
 -------------------------------------------------------------------*/
 
 .contact_blog {
-    float: left;
-    width: 100%;
-    border: solid #ddd 1px;
+    float:left;
+    width: 140%;
+    border: solid rgb(235, 235, 235) 1px;
+    background: rgb(218, 218, 218);
     border-radius: 3px;
-    padding: 30px;
+    padding: 15px;
 }
 
 .contact_blog h4.brief {
     font-size: 15px;
     font-weight: 300;
-    color: #455a64;
+    color: #f4f4f4;
     margin: -5px 0 5px;
     line-height: normal;
 }
@@ -3098,6 +3099,7 @@ ul.labels-category li p {
 .contact_inner {
     float: left;
     width: 100%;
+    color: rgb(132, 22, 33)
 }
 
 .contact_inner .left {

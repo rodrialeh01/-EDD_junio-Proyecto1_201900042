@@ -1064,17 +1064,101 @@ class NodoLib{
 class ListaSimple{
     constructor(){
         this.cabeza = null
+        this.tamanio = 0
     }
     insertar(_libro){
         let nuevo = new NodoLib(_libro)
         nuevo.siguiente = this.cabeza
         this.cabeza = nuevo
+        console.log(nuevo)
+        this.tamanio++
     }
+
+    //ORDENAMIENTO BURBUJA
     ordenamientoascendente(){
-
+        if(this.cabeza != null && this.cabeza.siguiente != null){
+            let i = 0
+            while(i != this.tamanio){
+                let actual = this.cabeza
+                let j = 0
+                while(j != this.tamanio-1){
+                    if(actual.siguiente != null ){
+                        if(actual.libro.nombre>actual.siguiente.libro.nombre){
+                            let temp = actual.libro
+                            actual.libro = actual.siguiente.libro
+                            actual.siguiente.libro = temp
+                        }
+                    }
+                    actual = actual.siguiente
+                    j++
+                }
+                i++
+            }
+        }
+        
     }
-    ordenamientodescendente(){
+    //ORDENAMIENTO QUICKSORT
+    ordenamientodescendente(izquierda, derecha){
+        let pivote = new NodoLib(izquierda.libro)
+        let i = izquierda
+        let j = derecha
+        let conti=-1, contj = -1
+        let actual = this.cabeza
+        while(actual!= null){
+            conti++
+            if(actual== izquierda){
+                break
+            }
+            actual = actual.siguiente
+        }
+        actual = this.cabeza
+        while(actual != null){
+            contj++
+            if(actual == derecha){
+                break
+            }
+            actual = actual.siguiente
+        }
+        let izq = conti
+        let der = contj
+        while(conti<contj){
+            while(i.libro.nombre >= pivote.libro.nombre && conti<contj){
+                conti++
+                i = i.siguiente
+            }
+            while(j.libro.nombre < pivote.libro.nombre){
+                contj--
+                let tem = this.cabeza
+                while(tem != null){
+                    if(tem.siguiente == j){
+                        break
+                    }
+                    tem = tem.siguiente
+                }
+                j = tem
+            }
+            if(conti<contj){
+                let aux = new NodoLib(i.libro)
+                i.libro = j.libro
+                j.libro = aux.libro
+            }
+        }
 
+        izquierda.libro = j.libro
+        j.libro = pivote.libro
+        let temp = this.cabeza
+        while(temp!= null){
+            if(temp.siguiente == j){
+                break
+            }
+            temp = temp.siguiente
+        }
+        if(izq<contj-1){
+            this.ordenamientodescendente(izquierda,temp)
+        }
+        if(contj+1<der){
+            this.ordenamientodescendente(j.siguiente, derecha)
+        }
     }
 }
 

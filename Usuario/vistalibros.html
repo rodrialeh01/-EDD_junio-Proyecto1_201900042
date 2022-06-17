@@ -93,8 +93,20 @@
                            </div>
                         </div>
                      </div>
-                     <div class="full padding_infor_info">
-                    </div>
+                     <div class="dropdown_section">
+                        <div class="dropdown">
+                           <select name="Tipo" id="ordenamiento" class="btn bg-gradient-primary dropdown-toggle">
+                              <option class="dropdown-item" value="Ascendente">Ordenar Ascendentemente los Libros</option>
+                              <option class="dropdown-item" value="Descendente">Ordenar Descendentemente los Libros</option>
+                           </select>
+                           <div class="field margin_0">
+                              <button class="main_bt" onclick="opcion()">Seleccionar</button>
+                           </div>
+                        </div>
+                     </div>
+                     <div id="mostrarbooks">
+
+                     </div>
                   </div>
                </div>
                <!-- end dashboard inner -->
@@ -114,6 +126,275 @@
             nombre.innerHTML = "Usuario @"+obj.username
          }
          mostraru()
+         function opcion(){
+            let op = document.getElementById("ordenamiento")
+            let ord =op.options[op.selectedIndex].text
+            console.log(ord)
+            if(ord=="Ordenar Ascendentemente los Libros"){
+               ascendente()
+            }else if(ord="Ordenar Descendentemente los Libros"){
+               descendente()
+            }
+         }
+
+         function ascendente(){
+            let codigo =` <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 profile_details margin_bottom_30">
+                        <div class="contact_blog">
+                           <h3 class="brief"><strong>Ordenamiento Burbuja</strong></h3>
+                           <div class="contact_inner">
+                              <h4><code><br>
+                                 <span style='display:inline; white-space:pre;'> 
+let i = 0
+while(i != this.tamanio){
+      let actual = this.cabeza
+      let j = 0
+      while(j != this.tamanio-1){
+         if(tempo.siguiente != null ){
+            if(tempo.libro.cantidad&lt;tempo.libro.siguiente.cantidad){
+               let temp = actual.libro
+               actual.libro = actual.siguiente.libro
+               actual.siguiente.libro = temp
+            }
+         }
+         tempo = tempo.siguiente
+         j++
+      }
+      i++
+} </span>
+                             </code></h4>
+                           </div>
+                        </div>
+                     </div>`
+
+            console.log(codigo)
+            let libros = ""
+            //CARGANDO LA MATRIZ DE LIBROS DE FANTASIA
+            let matriz_fantasia = new MatrizOrtogonal()
+            matriz_fantasia.llenarmatriz()
+            let librosguardadosf = JSON.parse(localStorage.getItem("matriz_libros_fantasia"))
+            console.log(librosguardadosf)
+            if(librosguardadosf != null){
+               for(let i = 0;i<librosguardadosf.length;i++){
+                        let nuevo1 = new Libro(librosguardadosf[i].isbn,librosguardadosf[i].autor,librosguardadosf[i].nombre,librosguardadosf[i].cantidad,librosguardadosf[i].fila,librosguardadosf[i].columna,librosguardadosf[i].paginas,librosguardadosf[i].categoria)
+                        matriz_fantasia.insertar(parseInt(librosguardadosf[i].fila),parseInt(librosguardadosf[i].columna),nuevo1)
+               }
+            }
+            //CARGANDO LA MATRIZ DE LIBROS THRILLER
+            let matriz_thriller = new MatrizDispersa()
+            let librosguardadost = JSON.parse(localStorage.getItem("matriz_libros_thriller"))
+            console.log(librosguardadost)
+            if(librosguardadost != null){
+               for(let i = 0;i<librosguardadost.length;i++){
+                        let nuevo1 = new Libro(librosguardadost[i].isbn,librosguardadost[i].autor,librosguardadost[i].nombre,librosguardadost[i].cantidad,librosguardadost[i].fila,librosguardadost[i].columna,librosguardadost[i].paginas,librosguardadost[i].categoria)
+                        matriz_thriller.insertar(parseInt(librosguardadost[i].fila),parseInt(librosguardadost[i].columna),nuevo1)
+               }
+            }
+
+            //----------LISTA SIMPLE DE TODOS LOS LIBROS
+            let lista_libros = new ListaSimple()
+            for(let i = 0; i<=parseInt(matriz_thriller.filas.ultimo.id); i++){
+               for(let j = 0; j<=parseInt(matriz_thriller.columnas.ultimo.id); j++){
+                  let nodom = matriz_thriller.retornarNodo(i,j)
+                  if(nodom != null){
+                     lista_libros.insertar(nodom.libro)
+                  }
+               }
+            }
+            for(let i = 1; i<=25; i++){
+               for(let j = 1; j<=25; j++){
+                  let lib = matriz_fantasia.retornarnodolibro(i,j)
+                  if(lib != null){
+                     lista_libros.insertar(lib)
+                  }
+               }
+            }
+            let t = lista_libros.cabeza
+            while(t!= null){
+               if(t.siguiente == null){
+                  break
+               }
+               t = t.siguiente
+            }
+            lista_libros.ordenamientoascendente()
+            console.log(lista_libros)
+            let temporal = lista_libros.cabeza
+            while(temporal != null){
+            libros+= `<div class="full padding_infor_info">
+                        <div class="row column1">
+                           <div class="col-md-6 col-lg-4">
+                              <div class="full white_shd margin_bottom_30">
+                                 <div class="info_people">
+                                    <div class="p_info_img">
+                                       <img src="images/layout_img/msg2.png" alt="#" />
+                                    </div>
+                                    <div class="user_info_cont">
+                                       <h4>${temporal.libro.nombre}</h4>
+                                       <p>Autor: ${temporal.libro.autor} </p>
+                                       <p>Páginas: ${temporal.libro.paginas} </p>
+                                       <p>ISBN: ${temporal.libro.isbn} </p>
+                                       <p>Cantidad: ${temporal.libro.cantidad} </p>
+                                       <p class="p_status">${temporal.libro.categoria}</p>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <br>
+                    </div>`
+                  temporal = temporal.siguiente
+            }
+            document.getElementById("mostrarbooks").innerHTML = codigo + libros
+         }
+         function descendente(){
+            let codigo = `<div class="col-lg-4 col-md-6 col-sm-6 col-xs-12 profile_details margin_bottom_30">
+                        <div class="contact_blog">
+                           <h3 class="brief"><strong>Ordenamiento QUICKSORT</strong></h3>
+                           <div class="contact_inner">
+                              <h4><code><br>
+                                 <span style='display:inline; white-space:pre;'> 
+let pivote = new NodoLib(izquierda.libro)
+let i = izquierda
+let j = derecha
+let conti=-1, contj = -1
+let actual = this.cabeza
+while(actual!= null){
+      conti++
+      if(actual== izquierda){
+         break
+      }
+      actual = actual.siguiente
+}
+actual = this.cabeza
+while(actual != null){
+      contj++
+      if(actual == derecha){
+         break
+      }
+      actual = actual.siguiente
+}
+let izq = conti
+let der = contj
+while(conti&lt;contj){
+while(i.libro.nombre &gt;= pivote.libro.nombre && conti&lt;contj){
+   conti++
+   i = i.siguiente
+}
+while(j.libro.nombre &lt; pivote.libro.nombre){
+   contj--
+   let tem = this.cabeza
+   while(tem != null){
+      if(tem.siguiente == j){
+            break
+      }
+      tem = tem.siguiente
+   }
+   j = tem
+}
+if(conti&lt;contj){
+   let aux = new NodoLib(i.libro)
+   i.libro = j.libro
+   j.libro = aux.libro
+}
+}
+
+izquierda.libro = j.libro
+j.libro = pivote.libro
+let temp = this.cabeza
+while(temp!= null){
+if(temp.siguiente == j){
+   break
+}
+temp = temp.siguiente
+}
+if(izq&lt;contj-1){
+this.ordenamientodescendente(izquierda,temp)
+}
+if(contj+1&lt;der){
+this.ordenamientodescendente(j.siguiente, derecha)
+} </span>
+                             </code></h4>
+                           </div>
+                        </div>
+                     </div>`
+            console.log(codigo)
+            let libros = ""
+            //CARGANDO LA MATRIZ DE LIBROS DE FANTASIA
+            let matriz_fantasia = new MatrizOrtogonal()
+            matriz_fantasia.llenarmatriz()
+            let librosguardadosf = JSON.parse(localStorage.getItem("matriz_libros_fantasia"))
+            console.log(librosguardadosf)
+            if(librosguardadosf != null){
+               for(let i = 0;i<librosguardadosf.length;i++){
+                        let nuevo1 = new Libro(librosguardadosf[i].isbn,librosguardadosf[i].autor,librosguardadosf[i].nombre,librosguardadosf[i].cantidad,librosguardadosf[i].fila,librosguardadosf[i].columna,librosguardadosf[i].paginas,librosguardadosf[i].categoria)
+                        matriz_fantasia.insertar(parseInt(librosguardadosf[i].fila),parseInt(librosguardadosf[i].columna),nuevo1)
+               }
+            }
+            //CARGANDO LA MATRIZ DE LIBROS THRILLER
+            let matriz_thriller = new MatrizDispersa()
+            let librosguardadost = JSON.parse(localStorage.getItem("matriz_libros_thriller"))
+            console.log(librosguardadost)
+            if(librosguardadost != null){
+               for(let i = 0;i<librosguardadost.length;i++){
+                        let nuevo1 = new Libro(librosguardadost[i].isbn,librosguardadost[i].autor,librosguardadost[i].nombre,librosguardadost[i].cantidad,librosguardadost[i].fila,librosguardadost[i].columna,librosguardadost[i].paginas,librosguardadost[i].categoria)
+                        matriz_thriller.insertar(parseInt(librosguardadost[i].fila),parseInt(librosguardadost[i].columna),nuevo1)
+               }
+            }
+
+            //----------LISTA SIMPLE DE TODOS LOS LIBROS
+            let lista_libros = new ListaSimple()
+            for(let i = 0; i<=parseInt(matriz_thriller.filas.ultimo.id); i++){
+               for(let j = 0; j<=parseInt(matriz_thriller.columnas.ultimo.id); j++){
+                  let nodom = matriz_thriller.retornarNodo(i,j)
+                  if(nodom != null){
+                     lista_libros.insertar(nodom.libro)
+                  }
+               }
+            }
+            for(let i = 1; i<=25; i++){
+               for(let j = 1; j<=25; j++){
+                  let lib = matriz_fantasia.retornarnodolibro(i,j)
+                  if(lib != null){
+                     lista_libros.insertar(lib)
+                  }
+               }
+            }
+            let t = lista_libros.cabeza
+            while(t!= null){
+               if(t.siguiente == null){
+                  break
+               }
+               t = t.siguiente
+            }
+            lista_libros.ordenamientodescendente(lista_libros.cabeza,t)
+            console.log(lista_libros)
+            let temporal = lista_libros.cabeza
+            while(temporal != null){
+            libros+= `<div class="full padding_infor_info">
+                        <div class="row column1">
+                           <div class="col-md-6 col-lg-4">
+                              <div class="full white_shd margin_bottom_30">
+                                 <div class="info_people">
+                                    <div class="p_info_img">
+                                       <img src="images/layout_img/msg2.png" alt="#" />
+                                    </div>
+                                    <div class="user_info_cont">
+                                       <h4>${temporal.libro.nombre}</h4>
+                                       <p>Autor: ${temporal.libro.autor} </p>
+                                       <p>Páginas: ${temporal.libro.paginas} </p>
+                                       <p>ISBN: ${temporal.libro.isbn} </p>
+                                       <p>Cantidad: ${temporal.libro.cantidad} </p>
+                                       <p class="p_status">${temporal.libro.categoria}</p>
+                                    </div>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                        <br>
+                    </div>`
+                  temporal = temporal.siguiente
+            }
+            document.getElementById("mostrarbooks").innerHTML = codigo + libros
+         }
       </script>
       <script src="js/jquery.min.js"></script>
       <script src="js/popper.min.js"></script>
