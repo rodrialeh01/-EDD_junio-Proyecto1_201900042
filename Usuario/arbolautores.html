@@ -65,8 +65,8 @@
                      <li>
                         <a href="#authors" data-toggle="collapse" class="dropdown-toggle"><i class="fa fa-users orange_color"></i> <span>Vista de Autores</span></a>
                         <ul class="collapse list-unstyled" id="authors">
-                           <li class="active"><a href="vistaautores.html">> <span>Ver Autores</span></a></li>
-                           <li><a href="arbolautores.html">> <span>Árbol de Autores</span></a></li>
+                           <li><a href="vistaautores.html">> <span>Ver Autores</span></a></li>
+                           <li class="active"><a href="arbolautores.html">> <span>Árbol de Autores</span></a></li>
                         </ul>
                      </li>
                      <li><a href="bibliotecavirtual.html"><i class="fa fa-institution blue2_color"></i> <span>Mi Biblioteca Virtual</span></a></li>
@@ -95,11 +95,11 @@
                      <div class="row column_title">
                         <div class="col-md-12">
                            <div class="page_title">
-                              <h2>Conoce a los Autores quienes crean un mundo de imaginación plasmada en un libro</h2>
+                              <h2>Árbol Binario de Autores</h2>
                            </div>
                         </div>
                      </div>
-                     <div class="full padding_infor_info">
+                     <div id="arbol_abb" class="full padding_infor_info">
                     </div>
                   </div>
                </div>
@@ -113,13 +113,35 @@
       <script src="https://unpkg.com/d3-graphviz@3.0.5/build/d3-graphviz.js"></script>
       <script src="../JavaScript/main.js"></script>
       <script>
-         var usuariolog = sessionStorage.getItem("usuariologueado")
-         function mostraru(){
-            let nombre = document.getElementById("mostraruser")
-            let obj = JSON.parse(usuariolog)
-            nombre.innerHTML = "Usuario @"+obj.username
-         }
-         mostraru()
+        var usuariolog = sessionStorage.getItem("usuariologueado")
+        function mostraru(){
+        let nombre = document.getElementById("mostraruser")
+        let obj = JSON.parse(usuariolog)
+        nombre.innerHTML = "Usuario @"+obj.username
+        }
+        mostraru()
+        function mostrararbol(){
+            let abb = new ArbolBinario()
+            let autores = localStorage.getItem("autores")
+            if(autores != null){
+                let authors = JSON.parse(autores)
+                for(let i = 0; i<authors.length; i++){
+                    let dpi = authors[i].dpi;
+                    let nombre = authors[i].nombre_autor;
+                    let correo = authors[i].correo;
+                    let telefono = authors[i].telefono;
+                    let direccion = authors[i].direccion;
+                    let biografia = authors[i].biografia;
+                    let nuevo = new Autor(dpi,nombre,correo,telefono,direccion,biografia)
+                    abb.insertarautor(nuevo)
+                }
+                abb.graficar()
+                let arbolgraphviz =  localStorage.getItem("dot_abb")
+                d3.select("#arbol_abb").graphviz()
+                    .renderDot(arbolgraphviz)
+            }
+        }
+        mostrararbol()
       </script>
       <script src="js/jquery.min.js"></script>
       <script src="js/popper.min.js"></script>

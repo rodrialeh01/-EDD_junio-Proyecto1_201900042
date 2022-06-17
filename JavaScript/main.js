@@ -1254,14 +1254,74 @@ function CargaLibros(){
     alert("Ha cargado libros exitosamente")
 }
 
+//================================================================AUTORES======================================================
+
+//---------ARBOL BINARIO-------------
+class NodoAutor{
+    constructor(_autor){
+        this.autor = _autor
+        this.izquierda = null
+        this.derecha = null
+    }
+}
+
+class ArbolBinario{
+    constructor(){
+        this.raiz = null
+        this.codigodot = ""
+    }
+    insertarautor(_autor){
+        this.raiz = this.add(_autor, this.raiz)
+    }
+
+    add(_autor, nodo){
+        if(nodo == null){
+            return new NodoAutor(_autor)
+        }else{
+            if(_autor.nombre < nodo.autor.nombre){
+                nodo.izquierda = this.add(_autor, nodo.izquierda)
+            }else if(_autor.nombre > nodo.autor.nombre){
+                nodo.derecha = this.add(_autor, nodo.derecha)
+            }
+        }
+        return nodo
+    }
+
+    preorden(){
+        this.pre_orden(this.raiz)
+    }
+    pre_orden(nodo){
+        if(nodo != null){
+            this.codigodot += "\nnodo" + nodo.autor.dpi + "[shape=circle,style=\"filled\",fillcolor=\"black\",fontname=\"Roboto Condensed\", label = \"" + nodo.autor.nombre + "\",fontcolor=\"white\"];"
+            if(nodo.izquierda != null){
+                this.codigodot += "\nnodo"+nodo.autor.dpi + " -> nodo" + nodo.izquierda.autor.dpi + "[headport=n];"
+            }
+            if(nodo.derecha != null){
+                this.codigodot += "\nnodo"+nodo.autor.dpi + " -> nodo" + nodo.derecha.autor.dpi + "[headport=n];"
+            }
+            this.pre_orden(nodo.izquierda)
+            this.pre_orden(nodo.derecha)
+        }
+    }
+
+    graficar(){
+        this.codigodot = "digraph G{\nbgcolor=\"#841621\";\nlabel=\"Arbol Binario de Autores\" fontcolor=\"white\"fontname=\"Roboto Condensed\" fontsize=28;\nedge[color=\"white\"];\nsplines=false;"
+        this.preorden()
+        this.codigodot+="\n}"
+        console.log(this.codigodot)
+        localStorage.setItem("dot_abb",this.codigodot)
+    }
+}
+
+//----------CLASE AUTOR-----------
 class Autor{
-    constructor(_dpi,_nombre,_correo,_telefono,_direccion,_bibliografia){
+    constructor(_dpi,_nombre,_correo,_telefono,_direccion,_biografia){
         this.dpi = _dpi
         this.nombre = _nombre
         this.correo = _correo
         this.telefono = _telefono
         this.direccion = _direccion
-        this.bibliografia = _bibliografia
+        this.biografia = _biografia
     }
 }
 function CargaAutores(){
@@ -1274,7 +1334,20 @@ function CargaAutores(){
     reader.addEventListener("load", (event) => {
         let texto = event.target.result;
         let jtexto = JSON.parse(texto)
-        console.log(jtexto)
+        let arbol = new ArbolBinario()
+        for(let i = 0; i<jtexto.length; i++){
+            let dpi = jtexto[i].dpi;
+            let nombre = jtexto[i].nombre_autor;
+            let correo = jtexto[i].correo;
+            let telefono = jtexto[i].telefono;
+            let direccion = jtexto[i].direccion;
+            let biografia = jtexto[i].biografia;
+            let nuevo = new Autor(dpi,nombre,correo,telefono,direccion,biografia)
+            arbol.insertarautor(nuevo)
+        }
+        let guardar = JSON.stringify(jtexto)
+        localStorage.setItem("autores",guardar)
     });
     reader.readAsText(archivo, "UTF-8");
+    alert("Se cargaron los autores exitosamente")
 }
