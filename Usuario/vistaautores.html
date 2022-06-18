@@ -99,7 +99,18 @@
                            </div>
                         </div>
                      </div>
-                     <div class="full padding_infor_info">
+                     <div class="dropdown_section">
+                        <h4>Selecciona un autor para poder visualizar su biografia</h4>
+                        <div class="dropdown">
+                           <select name="Tipo" id="nombres" class="btn bg-gradient-primary dropdown-toggle">
+                           </select>
+                           <div class="field margin_0">
+                              <button class="main_bt" onclick="opcion()">Seleccionar</button>
+                           </div>
+                        </div>
+                     </div>
+                     <div id="autorxd" class="full padding_infor_info">
+                     </div>
                     </div>
                   </div>
                </div>
@@ -120,6 +131,59 @@
             nombre.innerHTML = "Usuario @"+obj.username
          }
          mostraru()
+         function lista(){
+            let autores = JSON.parse(localStorage.getItem("autores"))
+            console.log(autores)
+            let selectnombres = document.getElementById("nombres")
+            for(let i = 0; i<autores.length; i++){
+               let nombre = autores[i].nombre_autor;
+               var option = document.createElement('option');
+               option.innerHTML = nombre;
+               option.value = nombre;
+               selectnombres.appendChild(option);
+            }
+         }
+         lista()
+         function opcion(){
+            let op = document.getElementById("nombres")
+            let nombre_a =op.options[op.selectedIndex].text
+            console.log(nombre_a)
+            let arbol = new ArbolBinario()
+            let autores = localStorage.getItem("autores")
+            let contenedor = document.getElementById("autorxd")
+            if(autores != null){
+               let authors = JSON.parse(autores)
+               for(let i = 0; i<authors.length; i++){
+                  let dpi = authors[i].dpi;
+                  let nombre = authors[i].nombre_autor;
+                  let correo = authors[i].correo;
+                  let telefono = authors[i].telefono;
+                  let direccion = authors[i].direccion;
+                  let biografia = authors[i].biografia;
+                  let nuevo = new Autor(dpi,nombre,correo,telefono,direccion,biografia)
+                  arbol.insertarautor(nuevo)
+               }
+            }
+            let autor = arbol.buscar(arbol.raiz,nombre_a)
+            let cod = `<div class="col-lg-12">
+                           <div class="full dis_flex center_text">
+                              <div class="profile_img"><img width="180" class="rounded-circle" src="images/layout_img/user_img.png" alt="#" /></div>
+                              <div class="profile_contant">
+                                 <div class="contact_inner">
+                                    <h3>${autor.nombre}</h3>
+                                    <p><strong>DPI: </strong>${autor.dpi}</p>
+                                    <p><strong>Dirección: </strong>${autor.direccion}</p>
+                                    <ul class="list-unstyled">
+                                       <li><i class="fa fa-envelope-o"></i> : ${autor.correo}</li>
+                                       <li><i class="fa fa-phone"></i> : ${autor.telefono}</li>
+                                       <li><i class="fa fa-user"></i><strong> Biografía: </strong> ${autor.biografia}</li>
+                                    </ul>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>`
+                        contenedor.innerHTML = cod
+         }
       </script>
       <script src="js/jquery.min.js"></script>
       <script src="js/popper.min.js"></script>

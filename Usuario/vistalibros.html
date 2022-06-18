@@ -150,22 +150,24 @@
                            <div class="contact_inner">
                               <h4><code><br>
                                  <span style='display:inline; white-space:pre;'> 
-let i = 0
-while(i != this.tamanio){
-      let actual = this.cabeza
-      let j = 0
-      while(j != this.tamanio-1){
-         if(tempo.siguiente != null ){
-            if(tempo.libro.cantidad&lt;tempo.libro.siguiente.cantidad){
-               let temp = actual.libro
-               actual.libro = actual.siguiente.libro
-               actual.siguiente.libro = temp
+if(this.cabeza != null && this.cabeza.siguiente != null){
+   let i = 0
+   while(i != this.tamanio){
+         let actual = this.cabeza
+         let j = 0
+         while(j != this.tamanio-1){
+            if(actual.siguiente != null ){
+               if(actual.libro.nombre&lt;actual.siguiente.libro.nombre){
+                     let temp = actual.libro
+                     actual.libro = actual.siguiente.libro
+                     actual.siguiente.libro = temp
+               }
             }
+            actual = actual.siguiente
+            j++
          }
-         tempo = tempo.siguiente
-         j++
-      }
-      i++
+         i++
+   }
 } </span>
                              </code></h4>
                            </div>
@@ -264,59 +266,59 @@ let j = derecha
 let conti=-1, contj = -1
 let actual = this.cabeza
 while(actual!= null){
-      conti++
-      if(actual== izquierda){
+   conti++
+   if(actual== izquierda){
          break
-      }
-      actual = actual.siguiente
+   }
+   actual = actual.siguiente
 }
 actual = this.cabeza
 while(actual != null){
-      contj++
-      if(actual == derecha){
+   contj++
+   if(actual == derecha){
          break
-      }
-      actual = actual.siguiente
+   }
+   actual = actual.siguiente
 }
 let izq = conti
 let der = contj
 while(conti&lt;contj){
-while(i.libro.nombre &gt;= pivote.libro.nombre && conti&lt;contj){
-   conti++
-   i = i.siguiente
-}
-while(j.libro.nombre &lt; pivote.libro.nombre){
-   contj--
-   let tem = this.cabeza
-   while(tem != null){
-      if(tem.siguiente == j){
-            break
-      }
-      tem = tem.siguiente
+   while(i.libro.nombre &gt;= pivote.libro.nombre && conti&lt;contj){
+         conti++
+         i = i.siguiente
    }
-   j = tem
-}
-if(conti&lt;contj){
-   let aux = new NodoLib(i.libro)
-   i.libro = j.libro
-   j.libro = aux.libro
-}
+   while(j.libro.nombre &lt; pivote.libro.nombre){
+         contj--
+         let tem = this.cabeza
+         while(tem != null){
+            if(tem.siguiente == j){
+               break
+            }
+            tem = tem.siguiente
+         }
+         j = tem
+   }
+   if(conti&lt;contj){
+         let aux = new NodoLib(i.libro)
+         i.libro = j.libro
+         j.libro = aux.libro
+   }
 }
 
 izquierda.libro = j.libro
 j.libro = pivote.libro
 let temp = this.cabeza
 while(temp!= null){
-if(temp.siguiente == j){
-   break
-}
-temp = temp.siguiente
+   if(temp.siguiente == j){
+         break
+   }
+   temp = temp.siguiente
 }
 if(izq&lt;contj-1){
-this.ordenamientodescendente(izquierda,temp)
+   this.ordenamientodescendente(izquierda,temp)
 }
 if(contj+1&lt;der){
-this.ordenamientodescendente(j.siguiente, derecha)
+   this.ordenamientodescendente(j.siguiente, derecha)
 } </span>
                              </code></h4>
                            </div>

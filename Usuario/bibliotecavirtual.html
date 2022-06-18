@@ -100,6 +100,18 @@
                         </div>
                      </div>
                      <div class="full padding_infor_info">
+                        <div class="dash_blog">
+                           <div class="dash_blog_inner">
+                              <div class="dash_head">
+                                 <h3><span><i class="fa fa-book"></i> Mis Libros</span><span class="plus_green_bt"></span></h3>
+                              </div>
+                              <div class="msg_list_main">
+                                 <ul id="libros_user" class="msg_list">
+                                    
+                                 </ul>
+                              </div>
+                           </div>
+                        </div>
                     </div>
                   </div>
                </div>
@@ -120,6 +132,92 @@
             nombre.innerHTML = "Usuario @"+obj.username
          }
          mostraru()
+         function mostrarlibros(){
+            let container = document.getElementById("libros_user")
+
+            //================CARGANDO DATA============
+            let usersguardados =  JSON.parse(localStorage.getItem("lista_usuarios"))
+            let lusers = new ListaUsuarios()
+            for(let i = 0; i<usersguardados.length; i++){
+               let cargau = new Usuario(usersguardados[i].dpi,usersguardados[i].nombre,usersguardados[i].username,usersguardados[i].correo,usersguardados[i].rol,usersguardados[i].contrasenia,usersguardados[i].telefono)
+               lusers.insertarusuario(cargau)
+               let libus = localStorage.getItem("libros_"+usersguardados[i].username)
+               if (libus != null){
+                  if(libus != "[]"){
+                     let l = libus.replace("[","")
+                     l = l.replace("]","")
+                     let li = l.split(",")
+                     console.log("-------"+li)
+                     for(let j = 0; j<li.length; j++){
+                        lusers.insertarlibro(li[j],usersguardados[i].dpi)
+                     }
+                  }
+               }
+            }
+            let matriz_fantasia = new MatrizOrtogonal()
+            matriz_fantasia.llenarmatriz()
+            let librosguardadosf = JSON.parse(localStorage.getItem("matriz_libros_fantasia"))
+            console.log(librosguardadosf)
+            if(librosguardadosf != null){
+               for(let i = 0;i<librosguardadosf.length;i++){
+                        let nuevo1 = new Libro(librosguardadosf[i].isbn,librosguardadosf[i].autor,librosguardadosf[i].nombre,librosguardadosf[i].cantidad,librosguardadosf[i].fila,librosguardadosf[i].columna,librosguardadosf[i].paginas,librosguardadosf[i].categoria)
+                        matriz_fantasia.insertar(parseInt(librosguardadosf[i].fila),parseInt(librosguardadosf[i].columna),nuevo1)
+               }
+            }
+            let matriz_thriller = new MatrizDispersa()
+            let librosguardadost = JSON.parse(localStorage.getItem("matriz_libros_thriller"))
+            console.log(librosguardadost)
+            if(librosguardadost != null){
+               for(let i = 0;i<librosguardadost.length;i++){
+                        let nuevo1 = new Libro(librosguardadost[i].isbn,librosguardadost[i].autor,librosguardadost[i].nombre,librosguardadost[i].cantidad,librosguardadost[i].fila,librosguardadost[i].columna,librosguardadost[i].paginas,librosguardadost[i].categoria)
+                        matriz_thriller.insertar(parseInt(librosguardadost[i].fila),parseInt(librosguardadost[i].columna),nuevo1)
+               }
+            }
+
+            let obj = JSON.parse(usuariolog)
+            let usuario_actual = lusers.retornarusuario(obj.dpi)
+            let cod = ""
+            for(let i = 0; i<=parseInt(matriz_thriller.filas.ultimo.id); i++){
+               for(let j = 0; j<=parseInt(matriz_thriller.columnas.ultimo.id); j++){
+                  let nodom = matriz_thriller.retornarNodo(i,j)
+                  if(nodom != null){
+                     if(lusers.retornarlibro(obj.dpi,nodom.libro.nombre) == nodom.libro.nombre){
+                        cod+= `     <li>
+                                       <span><img src="images/layout_img/msg2.png" class="img-responsive" alt="#" /></span>
+                                       <span>
+                                       <span class="name_user">${nodom.libro.nombre}</span>
+                                       <span class="msg_user">Autor: ${nodom.libro.autor}</span><br>
+                                       <span class="msg_user">Páginas: ${nodom.libro.paginas}</span><br>
+                                       <span class="msg_user">Categoria: ${nodom.libro.categoria}</span><br>
+                                       <span class="msg_user">Cantidad Adquirida: ${lusers.retornarcantlibro(obj.dpi,nodom.libro.nombre)}</span><br>
+                                       </span>
+                                    </li>`
+                     }
+                  }
+               }
+            }
+            for(let i = 1; i<=25; i++){
+               for(let j = 1; j<=25; j++){
+                  let lib = matriz_fantasia.retornarnodolibro(i,j)
+                  if(lib != null){
+                     if(lusers.retornarlibro(obj.dpi,lib.nombre) == lib.nombre){
+                        cod+= `     <li>
+                                       <span><img src="images/layout_img/msg2.png" class="img-responsive" alt="#" /></span>
+                                       <span>
+                                       <span class="name_user">${lib.nombre}</span>
+                                       <span class="msg_user">Autor: ${lib.autor}</span><br>
+                                       <span class="msg_user">Páginas: ${lib.paginas}</span><br>
+                                       <span class="msg_user">Categoria: ${lib.categoria}</span><br>
+                                       <span class="msg_user">Cantidad Adquirida: ${lusers.retornarcantlibro(obj.dpi,lib.nombre)}</span><br>
+                                       </span>
+                                    </li>`
+                     }
+                  }
+               }
+            }
+            container.innerHTML = cod
+         }
+         mostrarlibros()
       </script>
       <script src="js/jquery.min.js"></script>
       <script src="js/popper.min.js"></script>

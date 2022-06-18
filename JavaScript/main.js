@@ -185,6 +185,37 @@ class ListaUsuarios{
             return contador
         }
     }
+    retornarlibro(_dpi,_libro){
+        let user = this.retornarusuario(_dpi)
+        if(user.abajo == null){
+            return null
+        }else{
+            let temporal = user.abajo
+            while(temporal != null){
+                if(temporal.nombre == _libro){
+                    return temporal.nombre
+                }
+                temporal = temporal.abajo
+            }
+            return null
+        }
+    }
+    retornarcantlibro(_dpi,_libro){
+        let user = this.retornarusuario(_dpi)
+        let contador = 0
+        if(user.abajo == null){
+            return 0
+        }else{
+            let temporal = user.abajo
+            while(temporal != null){
+                if(temporal.nombre == _libro){
+                    contador++
+                }
+                temporal = temporal.abajo
+            }
+            return contador
+        }
+    }
 }
 
 //-------------LISTA DOBLEMENTE ENLAZADA----------------
@@ -1269,6 +1300,7 @@ class ArbolBinario{
     constructor(){
         this.raiz = null
         this.codigodot = ""
+        this.codigohtml = ""
     }
     insertarautor(_autor){
         this.raiz = this.add(_autor, this.raiz)
@@ -1287,10 +1319,10 @@ class ArbolBinario{
         return nodo
     }
 
-    preorden(){
-        this.pre_orden(this.raiz)
+    preordenD(){
+        this.pre_ordenD(this.raiz)
     }
-    pre_orden(nodo){
+    pre_ordenD(nodo){
         if(nodo != null){
             this.codigodot += "\nnodo" + nodo.autor.dpi + "[shape=circle,style=\"filled\",fillcolor=\"black\",fontname=\"Roboto Condensed\", label = \"" + nodo.autor.nombre + "\",fontcolor=\"white\"];"
             if(nodo.izquierda != null){
@@ -1299,18 +1331,33 @@ class ArbolBinario{
             if(nodo.derecha != null){
                 this.codigodot += "\nnodo"+nodo.autor.dpi + " -> nodo" + nodo.derecha.autor.dpi + "[headport=n];"
             }
-            this.pre_orden(nodo.izquierda)
-            this.pre_orden(nodo.derecha)
+            this.pre_ordenD(nodo.izquierda)
+            this.pre_ordenD(nodo.derecha)
         }
     }
 
     graficar(){
         this.codigodot = "digraph G{\nbgcolor=\"#841621\";\nlabel=\"Arbol Binario de Autores\" fontcolor=\"white\"fontname=\"Roboto Condensed\" fontsize=28;\nedge[color=\"white\"];\nsplines=false;"
-        this.preorden()
+        this.preordenD()
         this.codigodot+="\n}"
         console.log(this.codigodot)
         localStorage.setItem("dot_abb",this.codigodot)
     }
+    
+    buscar(nodo,_nombre){
+        if(nodo == null){
+            return null
+        }else{
+            if(nodo.autor.nombre == _nombre){
+                return nodo.autor
+            }else if(_nombre < nodo.autor.nombre){
+                return this.buscar(nodo.izquierda,_nombre)
+            }else if(_nombre > nodo.autor.nombre){
+                return this.buscar(nodo.derecha,_nombre)
+            }
+        }
+    }
+    
 }
 
 //----------CLASE AUTOR-----------
