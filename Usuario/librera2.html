@@ -141,12 +141,8 @@
                                     <form>
                                        <fieldset>
                                           <div class="field">
-                                             <label class="label_field">No. de Repisa</label>
-                                             <input id="filam"type="number" name="number" placeholder="No. de Repisa" />
-                                          </div>
-                                          <div class="field">
-                                             <label class="label_field">No. Columna</label>
-                                             <input id="columnam"type="number" name="number" placeholder="No. de Columna" />
+                                             <label class="label_field">Nombre</label>
+                                             <input id="name_book"type="text name="text" placeholder="Nombre del Libro" />
                                           </div>
                                           <br>
                                           <div class="field margin_0">
@@ -227,14 +223,23 @@
                         matriz_thriller.insertar(parseInt(librosguardadost[i].fila),parseInt(librosguardadost[i].columna),nuevo1)
                }
             }
-            let fila = document.getElementById("filam").value
-            console.log(fila)
-            let columna = document.getElementById("columnam").value
-            console.log(columna)
-            let nodo = matriz_thriller.retornarNodo(parseInt(fila),parseInt(columna))
+            let nombre = document.getElementById("name_book").value
+            console.log(nombre)
+            let nodo 
+            for(let i = 0; i<=parseInt(matriz_thriller.filas.ultimo.id); i++){
+               for(let j = 0; j<=parseInt(matriz_thriller.columnas.ultimo.id); j++){
+                  let nodom = matriz_thriller.retornarNodo(i,j)
+                  if(nodom != null){
+                     if(nombre==nodom.libro.nombre){
+                        nodo = nodom
+                        break
+                     }
+                  }
+               }
+            }
             console.log(nodo)
             if(nodo == null){
-               alert("Ingrese la fila y columna de un libro que se situe en la librera")
+               alert("Ingrese el nombre de un libro existente de la librera")
             }else{
                let cantidad = parseInt(nodo.libro.cantidad)
                lugarnombre.innerHTML = nodo.libro.nombre
@@ -268,11 +273,23 @@
                }
             }
             let cantidadcliente = document.getElementById("cantidad").value
-            let fila = document.getElementById("filam").value
-            let columna = document.getElementById("columnam").value
-            let nodo = matriz_thriller.retornarNodo(parseInt(fila),parseInt(columna))
+            let nombre = document.getElementById("name_book").value
+            console.log(nombre)
+            let nodo 
+            for(let i = 0; i<=parseInt(matriz_thriller.filas.ultimo.id); i++){
+               for(let j = 0; j<=parseInt(matriz_thriller.columnas.ultimo.id); j++){
+                  let nodom = matriz_thriller.retornarNodo(i,j)
+                  if(nodom != null){
+                     if(nombre==nodom.libro.nombre){
+                        nodo = nodom
+                        break
+                     }
+                  }
+               }
+            }
+            console.log(nodo)
             if(nodo == null){
-               alert("Ingrese la fila y columna de un libro que se situe en la librera")
+               alert("Ingrese el nombre de un libro existente de la librera")
             }else{
                if((cantidadcliente == "" && fila== "" && columna == "")||(cantidadcliente == "" && fila!= "" && columna != "")){
                   alert("Ingrese la cantidad de libros que quiere comprar")

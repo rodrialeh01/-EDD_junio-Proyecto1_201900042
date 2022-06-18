@@ -89,7 +89,7 @@ class ListaUsuarios{
             let direccion = "\n{rank= same; "
             while(contador!= this.tamanio){
                 let numnodolib = 1
-                nodos +="Nodo" + numnodo + "[label=\"Nombre: " + temporal.usuario.nombre + "\\nUsername: "+temporal.usuario.username+"\\nDPI: "+temporal.usuario.dpi+"\" group="+contador+"];\n"
+                nodos +="Nodo" + numnodo + "[label=\"Nombre: " + temporal.usuario.nombre + "\\nUsername: "+temporal.usuario.username+"\\nDPI: "+temporal.usuario.dpi+"\\nRol: "+temporal.usuario.rol+"\" group="+contador+"];\n"
                 direccion += "Nodo" + numnodo + "; "
                 if(temporal.abajo != null){
                     let temporal2 = temporal.abajo
@@ -283,7 +283,7 @@ class ListaDoble{
             let direccion = "\n{rank= same; "
             if(this.tamanio <5){
                 while(contador!= this.tamanio){
-                    nodos +="Nodo" + numnodo + "[label=\"Nombre: " + temporal.usuario.nombre + "\\nCantidad: "+temporal.cantidad+"\"];\n"
+                    nodos +="Nodo" + numnodo + "[label=\"Nombre: " + temporal.usuario.nombre + "\\nUsuario: "+temporal.usuario.username + "\\nCantidad: "+temporal.cantidad+"\"];\n"
                     direccion += "Nodo" + numnodo + "; "
                     temporal = temporal.siguiente
                     contador++
@@ -301,7 +301,7 @@ class ListaDoble{
                 codigodot += nodos +direccion+ conexiones + "}"
             }else{
                 while(contador!= 5){
-                    nodos +="Nodo" + numnodo + "[label=\"Nombre: " + temporal.usuario.nombre + "\\nCantidad: "+temporal.cantidad+"\", width=1];\n"
+                    nodos +="Nodo" + numnodo + "[label=\"Nombre: " + temporal.usuario.nombre + "\\nUsuario: "+temporal.usuario.username + "\\nCantidad: "+temporal.cantidad+"\", width=1];\n"
                     direccion += "Nodo" + numnodo + "; "
                     temporal = temporal.siguiente
                     contador++
