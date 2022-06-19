@@ -1300,7 +1300,6 @@ class ArbolBinario{
     constructor(){
         this.raiz = null
         this.codigodot = ""
-        this.codigohtml = ""
     }
     insertarautor(_autor){
         this.raiz = this.add(_autor, this.raiz)
