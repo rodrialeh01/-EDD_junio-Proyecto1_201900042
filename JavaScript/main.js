@@ -557,6 +557,7 @@ class MatrizDispersa{
                         nuevo.arriba = tempo.arriba
                         tempo.arriba.abajo = nuevo
                         tempo.arriba = nuevo
+                        break
                     }else if(nuevo.x == tempo.x && nuevo.y == tempo.y){
                         break
                     }else{
@@ -1214,7 +1215,9 @@ function CargaLibros(){
     let input_archivo = document.getElementById("inlibros");
     let archivo = input_archivo.files[0];
     let librosguardadost = JSON.parse(localStorage.getItem("matriz_libros_thriller"))
+    console.log(librosguardadost)
     let librosguardadosf = JSON.parse(localStorage.getItem("matriz_libros_fantasia"))
+    console.log(librosguardadosf)
     if(librosguardadost != null){
         for(let i = 0;i<librosguardadost.length;i++){
             let nuevo1 = new Libro(librosguardadost[i].isbn,librosguardadost[i].autor,librosguardadost[i].nombre,librosguardadost[i].cantidad,librosguardadost[i].fila,librosguardadost[i].columna,librosguardadost[i].paginas,librosguardadost[i].categoria)
@@ -1224,7 +1227,7 @@ function CargaLibros(){
     if(librosguardadosf != null){
         for(let i = 0;i<librosguardadosf.length;i++){
             let nuevo2 = new Libro(librosguardadosf[i].isbn,librosguardadosf[i].autor,librosguardadosf[i].nombre,librosguardadosf[i].cantidad,librosguardadosf[i].fila,librosguardadosf[i].columna,librosguardadosf[i].paginas,librosguardadosf[i].categoria)
-            matriz_fantasia.insertar(parseInt(librosguardadost[i].fila),parseInt(librosguardadost[i].columna),nuevo2)
+            matriz_fantasia.insertar(parseInt(librosguardadosf[i].fila),parseInt(librosguardadosf[i].columna),nuevo2)
         }
     }
     if (!archivo) {
